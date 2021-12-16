@@ -18,7 +18,7 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
     }
 
     @Override
-    public boolean isValid(T value) {
+    public final boolean validate(T value) {
         return next == null || next.isValid(value);
     }
 }

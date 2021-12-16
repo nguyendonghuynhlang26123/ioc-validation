@@ -8,7 +8,7 @@ public class ValidatorChain<T> {
     private Validator<? extends Annotation, T> head;
 
     public boolean validate(T value){
-        return head.isValid(value);
+        return head.validate(value);
     }
 
     public Validator<? extends Annotation, T> find(Class<Validator<? extends Annotation,T>> target) throws ValidatorNotFoundException {
