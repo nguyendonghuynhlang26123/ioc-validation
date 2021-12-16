@@ -1,6 +1,7 @@
 import annotations.ValidatedBy;
-import utils.Validator;
+import validator.Validator;
 import utils.Violation;
+import validator.ValidatorChain;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -40,6 +41,10 @@ public class ValidationProvider {
             }
 
             annotations = field.getDeclaredAnnotations();
+
+            // Create empty validation chain
+            ValidatorChain validatorChain = new ValidatorChain();
+
             // For each field's annotation
             for (Annotation annotation : annotations) {
                 System.out.print(annotation.annotationType());
@@ -61,22 +66,37 @@ public class ValidationProvider {
                     initMethod.setAccessible(true);
                     initMethod.invoke(validator, annotation);
 
+                    //Add to chain
+                    validatorChain.add(validator);
+
                     // Call isValid() of validator implementation
-                    Method validationMethod = validatorImpl.getMethod("isValid", field.getType());
-                    validationMethod.setAccessible(true);
-                    boolean result = (boolean) validationMethod.invoke(validator, field.get(object));
+//                    Method validationMethod = validatorImpl.getMethod("isValid", field.getType());
+//                    validationMethod.setAccessible(true);
+//                    boolean result = (boolean) validationMethod.invoke(validator, field.get(object));
 
                     // Validation return false
-                    if (!result) {
-                        violationList.add(
-                                new Violation(object, field, "Violation @" + annotation.annotationType().getSimpleName() + " failed")
-                        );
-                    }
+//                    if (!result) {
+//                        violationList.add(
+//                                new Violation(object, field, "Violation @" + annotation.annotationType().getSimpleName() + " failed")
+//                        );
+//                    }
                 } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
                     violationList.add(
                             new Violation(object, field, e.getLocalizedMessage())
                     );
                 }
+            }
+
+            // Start chain validating
+            try {
+                boolean result = validatorChain.validate(field.get(object));
+                if(!result){
+                    violationList.add(
+                            new Violation(object, field, "Violation")
+                    );
+                }
+            } catch (IllegalAccessException e) {
+                // TODO: add violation
             }
         }
 

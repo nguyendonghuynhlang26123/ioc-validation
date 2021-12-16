@@ -1,6 +1,6 @@
 package annotations;
 
-import utils.Validator;
+import validator.Validator;
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)

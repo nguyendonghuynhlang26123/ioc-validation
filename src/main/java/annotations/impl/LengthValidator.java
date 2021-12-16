@@ -1,9 +1,10 @@
 package annotations.impl;
 
 import annotations.Length;
-import utils.Validator;
+import validator.Validator;
+import validator.impl.BaseValidator;
 
-public class LengthValidatorImpl implements Validator<Length,String>  {
+public class LengthValidator extends BaseValidator<Length,String> {
     int min;
     int max;
 
@@ -17,4 +18,5 @@ public class LengthValidatorImpl implements Validator<Length,String>  {
     public boolean isValid(String value) {
         return value.length() >= min && value.length() <= max;
     }
+
 }
