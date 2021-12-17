@@ -4,8 +4,9 @@ import annotations.NotEmpty;
 import validator.Validator;
 import validator.impl.BaseValidator;
 
-public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
+import java.util.Collection;
 
+public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
     @Override
     public void initialize(NotEmpty notEmpty) {}
 
@@ -14,4 +15,8 @@ public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
         return !value.isEmpty();
     }
 
+    @Override
+    public Class<String> acceptType() {
+        return String.class;
+    }
 }

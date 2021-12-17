@@ -1,4 +1,5 @@
 import annotations.ValidatedBy;
+import utils.exceptions.ViolationException;
 import validator.Validator;
 import utils.Violation;
 import validator.ValidatorChain;
@@ -47,7 +48,6 @@ public class ValidationProvider {
 
             // For each field's annotation
             for (Annotation annotation : annotations) {
-                System.out.print(annotation.annotationType());
                 try {
                     //If Validated by is implemented
                     ValidatedBy validateBy = annotation.annotationType().getDeclaredAnnotation(ValidatedBy.class);
@@ -81,6 +81,8 @@ public class ValidationProvider {
 //                        );
 //                    }
                 } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
+                    System.err.println("Warning! Unexpected error found at " + annotation.annotationType());
+                    e.printStackTrace();
                     violationList.add(
                             new Violation(object, field, e.getLocalizedMessage())
                     );
@@ -89,13 +91,8 @@ public class ValidationProvider {
 
             // Start chain validating
             try {
-                boolean result = validatorChain.validate(field.get(object));
-                if(!result){
-                    violationList.add(
-                            new Violation(object, field, "Violation")
-                    );
-                }
-            } catch (IllegalAccessException e) {
+                validatorChain.validate(field.get(object));
+            } catch (IllegalAccessException | ViolationException e) {
                 // TODO: add violation
             }
         }

@@ -1,14 +1,16 @@
 package validator;
 
 import utils.exceptions.ValidatorNotFoundException;
+import utils.exceptions.ViolationException;
 
 import java.lang.annotation.Annotation;
 
 public class ValidatorChain<T> {
     private Validator<? extends Annotation, T> head;
 
-    public boolean validate(T value){
-        return head.validate(value);
+    public void validate(T value) throws ViolationException {
+        head.validate(value);
+        // TODO: or catch errors here???
     }
 
     public Validator<? extends Annotation, T> find(Class<Validator<? extends Annotation,T>> target) throws ValidatorNotFoundException {
@@ -23,11 +25,12 @@ public class ValidatorChain<T> {
     }
 
     // add from top
-    public void add(Validator<?, T> add){
+    public ValidatorChain<T> add(Validator<?, T> add){
         if (head != null) {
             add.setNext(head);
         }
         head = add;
+        return this;
     }
 
     // Halted
