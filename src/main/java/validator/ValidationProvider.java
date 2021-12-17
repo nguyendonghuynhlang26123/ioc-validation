@@ -1,8 +1,8 @@
+package validator;
+
 import annotations.ValidatedBy;
 import utils.exceptions.ViolationException;
-import validator.Validator;
 import utils.Violation;
-import validator.ValidatorChain;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -93,7 +93,7 @@ public class ValidationProvider {
             try {
                 validatorChain.validate(field.get(object));
             } catch (IllegalAccessException | ViolationException e) {
-                // TODO: add violation
+                e.printStackTrace();
             }
         }
 

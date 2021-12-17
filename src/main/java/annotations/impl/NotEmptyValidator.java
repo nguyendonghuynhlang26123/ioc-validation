@@ -1,6 +1,8 @@
 package annotations.impl;
 
 import annotations.NotEmpty;
+import utils.exceptions.InvalidValueException;
+import utils.exceptions.ViolationException;
 import validator.Validator;
 import validator.impl.BaseValidator;
 
@@ -18,5 +20,10 @@ public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
     @Override
     public Class<String> acceptType() {
         return String.class;
+    }
+
+    @Override
+    public ViolationException exceptionBuilder(String value) {
+        return new InvalidValueException(this.getClass().getSimpleName()+": "+value+" is empty");
     }
 }

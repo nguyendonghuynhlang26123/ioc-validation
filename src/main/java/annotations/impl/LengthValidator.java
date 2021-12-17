@@ -1,12 +1,15 @@
 package annotations.impl;
 
 import annotations.Length;
+import utils.exceptions.InvalidValueException;
+import utils.exceptions.ViolationException;
 import validator.Validator;
 import validator.impl.BaseValidator;
 
 public class LengthValidator extends BaseValidator<Length,String> {
     int min;
     int max;
+    ViolationException exception;
 
     @Override
     public void initialize(Length length) {
@@ -30,5 +33,11 @@ public class LengthValidator extends BaseValidator<Length,String> {
     @Override
     public Class<String> acceptType() {
         return String.class;
+    }
+
+    @Override
+    public ViolationException exceptionBuilder(String value) {
+        return new InvalidValueException(this.getClass().getSimpleName()+
+                ": "+value+" has length violate min = "+min+", max = "+max);
     }
 }

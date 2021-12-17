@@ -9,8 +9,8 @@ public class DemoCodeValidation {
     public void demo(String input){
         try{
             new ValidatorChain<String>()
-                    .add(new NotEmptyValidator())
                     .add(new LengthValidator(1,10))
+                    .add(new NotEmptyValidator())
                     .validate(input);
         } catch (ViolationException e){
             // TODO: catch errors here???
