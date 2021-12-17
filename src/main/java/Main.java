@@ -1,5 +1,6 @@
 import annotations.Length;
 import builder.ValidatorBuilder;
+import demo.DemoCodeValidation;
 import demo.Student;
 
 public class Main {
@@ -14,13 +15,13 @@ public class Main {
         System.out.println("s3: " + validationProvider.validate(s3));
 
         /// Validator builder
-        ValidatorBuilder validatorBuilder = new ValidatorBuilder<String>(String.class).notEmpty().length(2,5);
+        var demo =new DemoCodeValidation();
         String testString1 = "";
         String testString2 = "dac";
         String testString3 = "dagdsacdafa";
 
-        System.out.println("test1: " + validatorBuilder.build().validate(testString1));
-        System.out.println("test2: " + validatorBuilder.build().validate(testString2));
-        System.out.println("test3: " + validatorBuilder.build().validate(testString3));
+        demo.demo(testString1);
+        demo.demo(testString2);
+        demo.demo(testString3);
     }
 }

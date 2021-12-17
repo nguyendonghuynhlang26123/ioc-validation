@@ -1,5 +1,6 @@
 package validator.impl;
 
+import utils.exceptions.ViolationException;
 import validator.Validator;
 
 import java.lang.annotation.Annotation;
@@ -22,11 +23,19 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
     }
 
     @Override
-    public final boolean validate(T value) {
+    public final void validate(T value) throws ViolationException {
 //        System.out.println("Validate " + value + " of type " + acceptType().getSimpleName());
         Class<?> myType = acceptType();
-        if (!value.getClass().equals(myType)) return false; // TODO: throw exception here???
-        if (!this.isValid(value)) return false; // TODO: throw exception here???
-        return next == null || next.isValid(value);
+        if (!value.getClass().equals(myType)){
+            // TODO: throw exception here???
+            throw new ViolationException();
+        }
+        if (!this.isValid(value)){
+            // TODO: throw exception here???
+            throw new ViolationException();
+        }
+        if( next != null){
+            next.validate(value);
+        }
     }
 }
