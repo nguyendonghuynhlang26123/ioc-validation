@@ -13,4 +13,5 @@ public interface Validator<Ctx extends Annotation,T> {
     void setNext(Validator<? extends Annotation, T> next);
     Validator<?,T> getNext();
     Class<T> acceptType();
+    ViolationException exceptionBuilder(T value);
 }

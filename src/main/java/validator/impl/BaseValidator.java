@@ -1,5 +1,7 @@
 package validator.impl;
 
+import utils.exceptions.InvalidTypeException;
+import utils.exceptions.InvalidValueException;
 import utils.exceptions.ViolationException;
 import validator.Validator;
 
@@ -27,12 +29,10 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
 //        System.out.println("Validate " + value + " of type " + acceptType().getSimpleName());
         Class<?> myType = acceptType();
         if (!value.getClass().equals(myType)){
-            // TODO: throw exception here???
-            throw new ViolationException();
+            throw new InvalidTypeException(this.getClass().getSimpleName()+" invalid type access");
         }
         if (!this.isValid(value)){
-            // TODO: throw exception here???
-            throw new ViolationException();
+            throw exceptionBuilder(value);
         }
         if( next != null){
             next.validate(value);
