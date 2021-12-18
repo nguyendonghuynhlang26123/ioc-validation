@@ -23,12 +23,12 @@ public class ValidatorBuilder<T> {
         return validatorChain;
     }
 
-    public ValidatorBuilder notEmpty(){
+    public ValidatorBuilder<T> notEmpty(){
         this.addValidation(new NotEmptyValidator());
         return this;
     }
 
-    public ValidatorBuilder length(int min, int max){
+    public ValidatorBuilder<T> length(int min, int max){
         this.addValidation(new LengthValidator(min, max));
         return this;
     }
