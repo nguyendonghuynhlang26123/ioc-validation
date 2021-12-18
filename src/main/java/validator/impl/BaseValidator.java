@@ -15,8 +15,9 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
     }
 
     @Override
-    public void setNext(Validator<? extends Annotation, T> validator) {
+    public Validator<?, T> setNext(Validator<? extends Annotation, T> validator) {
         next = validator;
+        return next;
     }
 
     @Override

@@ -9,7 +9,6 @@ import validator.impl.BaseValidator;
 public class LengthValidator extends BaseValidator<Length,String> {
     int min;
     int max;
-    ViolationException exception;
 
     @Override
     public void initialize(Length length) {
@@ -39,5 +38,10 @@ public class LengthValidator extends BaseValidator<Length,String> {
     public ViolationException exceptionBuilder(String value) {
         return new InvalidValueException(this.getClass().getSimpleName()+
                 ": "+value+" has length violate min = "+min+", max = "+max);
+    }
+
+    @Override
+    public Validator<Length, String> cloneValidator() {
+        return new LengthValidator(this.min, this.max);
     }
 }

@@ -43,50 +43,58 @@ public class ValidationProvider {
 
             annotations = field.getDeclaredAnnotations();
 
-            // Create empty validation chain
-            ValidatorChain validatorChain = new ValidatorChain();
+            // Get chain from store
+            String chainKey = object.getClass().getSimpleName()+"."+field.getName();
+            var validatorChain = ChainRegistry.getInstance().getChain(chainKey);
 
-            // For each field's annotation
-            for (Annotation annotation : annotations) {
-                try {
-                    //If Validated by is implemented
-                    ValidatedBy validateBy = annotation.annotationType().getDeclaredAnnotation(ValidatedBy.class);
-                    if (validateBy == null) {
-                        // No Validator Class is assigned.
-                        System.err.println("Warning! Not found validatedBy for annotation @" + annotation.annotationType());
-                        continue;
-                    }
+            // No prototype found
+            if (validatorChain == null){
+                // Create new chain
+                validatorChain = new ValidatorChain();
+                // For each field's annotation
+                for (Annotation annotation : annotations) {
+                    try {
+                        //If Validated by is implemented
+                        ValidatedBy validateBy = annotation.annotationType().getDeclaredAnnotation(ValidatedBy.class);
+                        if (validateBy == null) {
+                            // No Validator Class is assigned.
+                            System.err.println("Warning! Not found validatedBy for annotation @" + annotation.annotationType());
+                            continue;
+                        }
 
-                    // Retrieve the validatorImpl
-                    Class<? extends Validator<?,?>> validatorImpl = validateBy.clazz();
-                    Validator validator = validatorImpl.getDeclaredConstructor().newInstance();
+                        // Retrieve the validatorImpl
+                        Class<? extends Validator<?,?>> validatorImpl = validateBy.clazz();
+                        Validator validator = validatorImpl.getDeclaredConstructor().newInstance();
 
-                    //Call init
-                    Method initMethod = validatorImpl.getMethod("initialize", Annotation.class);
-                    initMethod.setAccessible(true);
-                    initMethod.invoke(validator, annotation);
+                        //Call init
+                        Method initMethod = validatorImpl.getMethod("initialize", Annotation.class);
+                        initMethod.setAccessible(true);
+                        initMethod.invoke(validator, annotation);
 
-                    //Add to chain
-                    validatorChain.add(validator);
+                        //Add to chain
+                        validatorChain.append(validator);
 
-                    // Call isValid() of validator implementation
+                        // Call isValid() of validator implementation
 //                    Method validationMethod = validatorImpl.getMethod("isValid", field.getType());
 //                    validationMethod.setAccessible(true);
 //                    boolean result = (boolean) validationMethod.invoke(validator, field.get(object));
 
-                    // Validation return false
+                        // Validation return false
 //                    if (!result) {
 //                        violationList.add(
 //                                new Violation(object, field, "Violation @" + annotation.annotationType().getSimpleName() + " failed")
 //                        );
 //                    }
-                } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
-                    System.err.println("Warning! Unexpected error found at " + annotation.annotationType());
-                    e.printStackTrace();
-                    violationList.add(
-                            new Violation(object, field, e.getLocalizedMessage())
-                    );
+                    } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
+                        System.err.println("Warning! Unexpected error found at " + annotation.annotationType());
+                        e.printStackTrace();
+                        violationList.add(
+                                new Violation(object, field, e.getLocalizedMessage())
+                        );
+                    }
                 }
+                // Register chain
+                ChainRegistry.getInstance().register(chainKey, validatorChain);
             }
 
             // Start chain validating

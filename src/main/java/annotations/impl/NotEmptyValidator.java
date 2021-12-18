@@ -26,4 +26,9 @@ public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
     public ViolationException exceptionBuilder(String value) {
         return new InvalidValueException(this.getClass().getSimpleName()+": "+value+" is empty");
     }
+
+    @Override
+    public Validator<NotEmpty, String> cloneValidator() {
+        return new NotEmptyValidator();
+    }
 }
