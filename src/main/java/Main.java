@@ -16,13 +16,13 @@ public class Main {
 //        validationProvider.validate(s3);
 
         /// Validator builder
-        var demo =new DemoCodeValidation();
-        String testString1 = "";
-        String testString2 = "dac";
-        String testString3 = "dagdsacdafa";
-
-        demo.demo(testString1);
-        demo.demo(testString2);
-        demo.demo(testString3);
+//        var demo =new DemoCodeValidation();
+//        String testString1 = "";
+//        String testString2 = "dac";
+//        String testString3 = "dagdsacdafa";
+//
+//        demo.demo(testString1);
+//        demo.demo(testString2);
+//        demo.demo(testString3);
     }
 }

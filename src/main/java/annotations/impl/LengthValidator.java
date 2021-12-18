@@ -36,4 +36,9 @@ public class LengthValidator extends BaseValidator<Length,String> {
         return new InvalidValueException(this.getClass().getSimpleName()+
                 ": "+value+" has length violate min = "+min+", max = "+max);
     }
+
+    @Override
+    public Validator<Length, String> cloneValidator() {
+        return new LengthValidator(this.min, this.max);
+    }
 }

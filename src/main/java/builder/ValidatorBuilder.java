@@ -1,6 +1,5 @@
 package builder;
 
-import annotations.NotEmpty;
 import annotations.impl.LengthValidator;
 import annotations.impl.NotEmptyValidator;
 import validator.Validator;
@@ -16,7 +15,7 @@ public class ValidatorBuilder<T> {
     }
 
     public void addValidation(Validator validator){
-        validatorChain.add(validator);
+        validatorChain.insert(validator);
     }
 
     public ValidatorChain<?> build(){
