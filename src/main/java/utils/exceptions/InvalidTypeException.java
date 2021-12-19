@@ -1,6 +1,6 @@
 package utils.exceptions;
 
-public class InvalidTypeException extends ViolationException{
+public class InvalidTypeException extends RuntimeException{
     public InvalidTypeException() {
     }
 

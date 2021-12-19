@@ -1,25 +1,21 @@
 package utils;
 
-import java.lang.reflect.Field;
-
 //TODO: Using builder to build violations
 public class Violation {
     Object object;
-    Field field;
-    String reason;
+    String message;
 
-    public Violation(Object object, Field field, String reason) {
+    public Violation(Object object, String message) {
         this.object = object;
-        this.field = field;
-        this.reason = reason;
+        this.message = message;
     }
 
     @Override
     public String toString() {
         return "Violation{" +
-                "object=" + object.getClass().getSimpleName() +
-                ", field=" + field.getName() +
-                ", reason='" + reason + '\'' +
+                "class=" + object.getClass().getSimpleName() +
+                ", message=" + message +
+                '\'' +
                 '}';
     }
 }

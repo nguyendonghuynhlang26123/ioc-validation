@@ -2,24 +2,30 @@ package builder;
 
 import annotations.impl.LengthValidator;
 import annotations.impl.NotEmptyValidator;
+import validator.ChainPrototype;
 import validator.Validator;
 import validator.impl.ValidatorChain;
 
 public class ValidatorBuilder<T> {
     Class<T> type;
-    ValidatorChain<T> validatorChain;
+    ChainPrototype<T> validatorChain;
 
     public ValidatorBuilder(Class<T> type) {
         this.type = type;
         validatorChain = new ValidatorChain<T>();
     }
 
-    public ValidatorChain<T> build(){
+    public ChainPrototype<T> build(){
         return validatorChain;
     }
 
+    public ValidatorBuilder<T> setChain(ChainPrototype<T> chain){
+        validatorChain = chain;
+        return this;
+    }
+
     protected void addToChain(Validator validator){
-        validatorChain.insert(validator);
+        validatorChain.append(validator);
     }
 
     public ValidatorBuilder<T> notEmpty(){

@@ -1,8 +1,7 @@
 package validator;
 
+import utils.Violation;
 import utils.exceptions.ValidatorNotFoundException;
-
-import java.lang.annotation.Annotation;
 
 public interface ChainPrototype<T> {
     //Clone method
@@ -14,6 +13,6 @@ public interface ChainPrototype<T> {
     Validator<?,T> find(Class<Validator<?,T>> target) throws ValidatorNotFoundException;
 
     //Business logic method
-    void validate(T value);
-
+    Violation validate(T value);
+    void validateAndThrow(T value);
 }
