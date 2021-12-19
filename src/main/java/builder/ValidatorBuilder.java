@@ -3,7 +3,7 @@ package builder;
 import annotations.impl.LengthValidator;
 import annotations.impl.NotEmptyValidator;
 import validator.Validator;
-import validator.ValidatorChain;
+import validator.impl.ValidatorChain;
 
 public class ValidatorBuilder<T> {
     Class<T> type;

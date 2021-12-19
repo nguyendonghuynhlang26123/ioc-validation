@@ -1,10 +1,7 @@
 package demo;
 
-import annotations.impl.LengthValidator;
-import annotations.impl.NotEmptyValidator;
 import builder.ValidatorBuilder;
 import utils.exceptions.ViolationException;
-import validator.ValidatorChain;
 
 public class DemoCodeValidation {
     public void demo(String input){

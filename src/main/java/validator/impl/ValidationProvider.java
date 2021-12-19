@@ -1,8 +1,9 @@
-package validator;
+package validator.impl;
 
 import annotations.ValidatedBy;
 import utils.exceptions.ViolationException;
 import utils.Violation;
+import validator.Validator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

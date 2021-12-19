@@ -11,9 +11,6 @@ import java.util.Collection;
 public abstract class BaseValidator<Ctx extends Annotation,T> implements Validator<Ctx ,T> {
     private Validator<? extends Annotation, T> next;
 
-    public BaseValidator() {
-    }
-
     @Override
     public Validator<?, T> setNext(Validator<? extends Annotation, T> validator) {
         next = validator;

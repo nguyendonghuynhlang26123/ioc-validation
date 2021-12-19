@@ -1,4 +1,6 @@
-package validator;
+package validator.impl;
+
+import validator.ChainPrototype;
 
 import java.util.HashMap;
 import java.util.Map;

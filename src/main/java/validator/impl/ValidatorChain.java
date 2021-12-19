@@ -1,7 +1,9 @@
-package validator;
+package validator.impl;
 
 import utils.exceptions.ValidatorNotFoundException;
 import utils.exceptions.ViolationException;
+import validator.ChainPrototype;
+import validator.Validator;
 
 import java.lang.annotation.Annotation;
 
