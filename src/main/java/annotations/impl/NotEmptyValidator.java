@@ -29,7 +29,7 @@ public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
     }
 
     @Override
-    public Validator<NotEmpty, String> cloneValidator() {
+    public Validator<String> cloneValidator() {
         return new NotEmptyValidator();
     }
 }

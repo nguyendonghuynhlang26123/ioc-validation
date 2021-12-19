@@ -12,8 +12,6 @@ public class Student implements Validatable {
     @Length(max = 4)
     String email;
 
-    @NotEmpty
-    @Length(min = 2, max = 3)
     int number;
 
     public Student(String name, String email) {

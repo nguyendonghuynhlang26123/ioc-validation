@@ -6,17 +6,19 @@ import validator.Validator;
 
 import java.lang.annotation.Annotation;
 
-public abstract class BaseValidator<Ctx extends Annotation,T> implements Validator<Ctx ,T> {
-    private Validator<? extends Annotation, T> next;
+public abstract class BaseValidator<Ctx extends Annotation,T> implements Validator<T> {
+    private Validator<T> next;
+
+    abstract public void initialize(Ctx ctx);
 
     @Override
-    public Validator<?, T> setNext(Validator<? extends Annotation, T> validator) {
+    public Validator<T> setNext(Validator<T> validator) {
         next = validator;
         return next;
     }
 
     @Override
-    public Validator<? extends Annotation, T> getNext() {
+    public Validator<T> getNext() {
         return next;
     }
 

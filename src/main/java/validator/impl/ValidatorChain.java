@@ -9,11 +9,12 @@ import validator.Validator;
 import java.lang.annotation.Annotation;
 
 public class ValidatorChain<T> implements ChainPrototype<T> {
-    private Validator<? extends Annotation, T> head;
-    private Validator<? extends Annotation, T> tail;
+    private Validator<T> head;
+    private Validator<T> tail;
 
     @Override
     public Violation validate(T value) throws ViolationException {
+        if (head == null) return null;
         return head.validate(value);
     }
 
@@ -39,7 +40,7 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     }
 
     @Override
-    public Validator<?, T> find(Class<Validator<?,T>> target) throws ValidatorNotFoundException {
+    public Validator<T> find(Class<Validator<T>> target) throws ValidatorNotFoundException {
         var temp = head;
         while (temp != null){
             if(temp.getClass().equals(target)){
@@ -52,7 +53,7 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
 
     // add from top
     @Override
-    public ValidatorChain<T> insert(Validator<?, T> add){
+    public ValidatorChain<T> insert(Validator<T> add){
         if (head != null) {
             add.setNext(head);
         } else {
@@ -64,7 +65,7 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
 
     // add from bottom
     @Override
-    public ValidatorChain<T> append(Validator<?, T> validator){
+    public ValidatorChain<T> append(Validator<T> validator){
         if (tail != null){
             tail.setNext(validator);
         } else {
@@ -75,7 +76,7 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     }
 
     // Halted
-    public void addBefore(Validator<?,T> add, Class<Validator<?,T>> target){
+    public void addBefore(Validator<T> add, Class<Validator<T>> target){
         try{
             var targetValidator = find(target);
             add.setNext(targetValidator);

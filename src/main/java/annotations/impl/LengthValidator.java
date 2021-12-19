@@ -41,7 +41,7 @@ public class LengthValidator extends BaseValidator<Length,String> {
     }
 
     @Override
-    public Validator<Length, String> cloneValidator() {
+    public Validator<String> cloneValidator() {
         return new LengthValidator(this.min, this.max);
     }
 }

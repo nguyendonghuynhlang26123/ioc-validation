@@ -8,9 +8,9 @@ public interface ChainPrototype<T> {
     ChainPrototype<T> cloneChain();
 
     //Chain methods
-    ChainPrototype<T> insert(Validator<?,T> validator);
-    ChainPrototype<T> append(Validator<?,T> validator);
-    Validator<?,T> find(Class<Validator<?,T>> target) throws ValidatorNotFoundException;
+    ChainPrototype<T> insert(Validator<T> validator);
+    ChainPrototype<T> append(Validator<T> validator);
+    Validator<T> find(Class<Validator<T>> target) throws ValidatorNotFoundException;
 
     //Business logic method
     Violation validate(T value);

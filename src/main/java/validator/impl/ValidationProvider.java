@@ -7,6 +7,7 @@ import utils.Violation;
 import validator.Validator;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -55,17 +56,27 @@ public class ValidationProvider {
                 validatorChain = new ValidatorChain();
                 // For each field's annotation
                 for (Annotation annotation : annotations) {
-                    try {
-                        //If Validated by is implemented
-                        ValidatedBy validateBy = annotation.annotationType().getDeclaredAnnotation(ValidatedBy.class);
-                        if (validateBy == null) {
-                            // No Validator Class is assigned.
-                            System.err.println("Warning! Not found validatedBy for annotation @" + annotation.annotationType());
-                            continue;
-                        }
+                    //DO some sanity check:
 
-                        // Retrieve the validatorImpl
-                        Class<? extends Validator<?,?>> validatorImpl = validateBy.clazz();
+                    //check if @ValidatedBy is implemented
+                    ValidatedBy validateBy = annotation.annotationType().getDeclaredAnnotation(ValidatedBy.class);
+                    if (validateBy == null) {
+                        // No Validator Class is assigned.
+                        System.err.println("Warning! Not found validatedBy for annotation @" + annotation.annotationType());
+                        continue;
+                    }
+
+                    // Retrieve the @ValidatedBy Class
+                    Class<? extends Validator<?>> validatorImpl = validateBy.clazz();
+
+                    //Check if this class has "EMPTY" constructor. Since
+                    if (!hasParameterlessPublicConstructor(validatorImpl)) {
+                        // No Validator Class is assigned.
+                        System.err.println("Warnning! @" + annotation.annotationType() + " should implement Empty constructor for Provider to resolve");
+                        continue;
+                    }
+                    try {
+
                         Validator validator = validatorImpl.getDeclaredConstructor().newInstance();
 
                         //Call init
@@ -73,25 +84,9 @@ public class ValidationProvider {
                         initMethod.setAccessible(true);
                         initMethod.invoke(validator, annotation);
 
-                        //Set custom message
-//                        Method setMsg = validatorImpl.getMethod("setCustomMessage", String.class);
-//                        setMsg.setAccessible(true);
-//                        setMsg.invoke(validator, object.getClass().getSimpleName()+"."+field.getName());
-
                         //Add to chain
                         validatorChain.append(validator);
 
-                        // Call isValid() of validator implementation
-//                    Method validationMethod = validatorImpl.getMethod("isValid", field.getType());
-//                    validationMethod.setAccessible(true);
-//                    boolean result = (boolean) validationMethod.invoke(validator, field.get(object));
-
-                        // Validation return false
-//                    if (!result) {
-//                        violationList.add(
-//                                new Violation(object, field, "Violation @" + annotation.annotationType().getSimpleName() + " failed")
-//                        );
-//                    }
                     } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
                         System.err.println("Warning! Unexpected error found at " + annotation.annotationType());
                         e.printStackTrace();
@@ -116,5 +111,14 @@ public class ValidationProvider {
         }
 
         return violationList;
+    }
+
+    private boolean hasParameterlessPublicConstructor(Class<?> clazz) {
+        for (Constructor<?> constructor : clazz.getConstructors()) {
+            if (constructor.getParameterCount() == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }

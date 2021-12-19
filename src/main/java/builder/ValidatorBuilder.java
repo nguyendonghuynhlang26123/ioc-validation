@@ -12,7 +12,7 @@ public class ValidatorBuilder<T> {
 
     public ValidatorBuilder(Class<T> type) {
         this.type = type;
-        validatorChain = new ValidatorChain<T>();
+        validatorChain = new ValidatorChain<>();
     }
 
     public ChainPrototype<T> build(){
@@ -43,7 +43,7 @@ public class ValidatorBuilder<T> {
     }
 
     //Strict rule
-    public ValidatorBuilder<T> addCustomValidator(Validator<? , T> validator){
+    public ValidatorBuilder<T> addCustomValidator(Validator<T> validator){
         this.addToChain(validator);
         return this;
     }
