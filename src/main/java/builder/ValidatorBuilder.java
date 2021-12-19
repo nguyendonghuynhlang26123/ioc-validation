@@ -14,21 +14,31 @@ public class ValidatorBuilder<T> {
         validatorChain = new ValidatorChain<T>();
     }
 
-    public void addValidation(Validator validator){
-        validatorChain.insert(validator);
-    }
-
-    public ValidatorChain<?> build(){
+    public ValidatorChain<T> build(){
         return validatorChain;
     }
 
+    protected void addToChain(Validator validator){
+        validatorChain.insert(validator);
+    }
+
     public ValidatorBuilder<T> notEmpty(){
-        this.addValidation(new NotEmptyValidator());
+        this.addToChain(new NotEmptyValidator());
         return this;
     }
 
     public ValidatorBuilder<T> length(int min, int max){
-        this.addValidation(new LengthValidator(min, max));
+        this.addToChain(new LengthValidator(min, max));
+        return this;
+    }
+    public ValidatorBuilder<T> length(int max){
+        this.addToChain(new LengthValidator(0, max));
+        return this;
+    }
+
+    //Strict rule
+    public ValidatorBuilder<T> addCustomValidator(Validator<? , T> validator){
+        this.addToChain(validator);
         return this;
     }
 }
