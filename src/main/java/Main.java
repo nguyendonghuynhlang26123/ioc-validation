@@ -7,13 +7,9 @@ public class Main {
         Student s2 = new Student("", "");
         Student s3 = new Student("test", "test@test");
 
-        s1.validate();
-        s2.validate();
-        s3.validate();
-//        ValidationProvider validationProvider = ValidationProvider.getInstance();
-//        validationProvider.validate(s1);
-//        validationProvider.validate(s2);
-//        validationProvider.validate(s3);
+        s1.validate().forEach(System.out::println);
+        s2.validate().forEach(System.out::println);
+        s3.validate().forEach(System.out::println);
 
         /// Validator builder
 //        var demo =new DemoCodeValidation();

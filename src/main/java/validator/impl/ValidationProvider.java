@@ -1,6 +1,7 @@
 package validator.impl;
 
 import annotations.ValidatedBy;
+import utils.exceptions.InvalidTypeException;
 import utils.exceptions.ViolationException;
 import utils.Violation;
 import validator.Validator;
@@ -37,7 +38,7 @@ public class ValidationProvider {
             //Check if that field is accessible
             if (!field.trySetAccessible()) {
                 violationList.add(
-                        new Violation(object, field, "Fails to access object's field.")
+                        new Violation(object,"Fails to access object's field "+field.getName())
                 );
                 continue;
             }
@@ -72,6 +73,11 @@ public class ValidationProvider {
                         initMethod.setAccessible(true);
                         initMethod.invoke(validator, annotation);
 
+                        //Set custom message
+//                        Method setMsg = validatorImpl.getMethod("setCustomMessage", String.class);
+//                        setMsg.setAccessible(true);
+//                        setMsg.invoke(validator, object.getClass().getSimpleName()+"."+field.getName());
+
                         //Add to chain
                         validatorChain.append(validator);
 
@@ -90,7 +96,7 @@ public class ValidationProvider {
                         System.err.println("Warning! Unexpected error found at " + annotation.annotationType());
                         e.printStackTrace();
                         violationList.add(
-                                new Violation(object, field, e.getLocalizedMessage())
+                                new Violation(object, e.getLocalizedMessage() + "at" + field.getName())
                         );
                     }
                 }
@@ -100,8 +106,11 @@ public class ValidationProvider {
 
             // Start chain validating
             try {
-                validatorChain.validate(field.get(object));
-            } catch (IllegalAccessException | ViolationException e) {
+                var violation = validatorChain.validate(field.get(object));
+                if (violation != null){
+                    violationList.add(violation);
+                }
+            } catch (IllegalAccessException | InvalidTypeException e) {
                 e.printStackTrace();
             }
         }

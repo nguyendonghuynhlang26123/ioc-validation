@@ -1,17 +1,16 @@
 package validator;
 
-
-import utils.exceptions.ViolationException;
-
+import utils.Violation;
+import utils.exceptions.InvalidTypeException;
 import java.lang.annotation.Annotation;
 
 public interface Validator<Ctx extends Annotation,T> {
     void initialize(Ctx ctx);
     boolean isValid(T value);
-    void validate(T value) throws ViolationException;
+    Violation validate(T value) throws InvalidTypeException;
     Validator<?, T> setNext(Validator<? extends Annotation, T> next);
     Validator<?,T> getNext();
     Class<T> acceptType();
-    ViolationException exceptionBuilder(T value);
+    Violation violationBuilder(T value);
     Validator<Ctx, T> cloneValidator();
 }

@@ -4,6 +4,9 @@ import utils.Violation;
 
 import java.lang.reflect.Field;
 
+/***
+ * Don't use this
+ */
 public class ViolationException extends RuntimeException{
     public ViolationException() {
     }

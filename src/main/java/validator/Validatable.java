@@ -1,10 +1,13 @@
 package validator;
 
+import utils.Violation;
 import validator.impl.ValidationProvider;
 
+import java.util.Collection;
+
 public interface Validatable {
-    default void validate(){
+    default Collection<Violation> validate(){
         ValidationProvider validationProvider = ValidationProvider.getInstance();
-        validationProvider.validate(this);
+        return validationProvider.validate(this);
     }
 }
