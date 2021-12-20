@@ -25,7 +25,8 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
     @Override
     public final Violation validate(T value) throws InvalidTypeException {
         Class<?> myType = acceptType();
-        if (!value.getClass().equals(myType)){
+        Class<?> valueType = value.getClass();
+        if (!myType.isAssignableFrom(valueType)){
             throw new InvalidTypeException(this.getClass().getSimpleName()+" invalid type access");
         }
         if (!this.isValid(value)){
