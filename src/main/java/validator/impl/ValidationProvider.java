@@ -1,7 +1,10 @@
 package validator.impl;
 
 import annotations.ValidatedBy;
-import utils.exceptions.InvalidTypeException;
+import utils.exceptions.ValidatorDeclarationException;
+import utils.exceptions.ProviderResolveException;
+import utils.exceptions.ValidationException;
+import utils.exceptions.ValidatorNotFoundException;
 import validator.ChainPrototype;
 import violation.Violation;
 import validator.Validator;
@@ -27,7 +30,7 @@ public class ValidationProvider {
     }
 
     //Read each fields of the object
-    public <T> ValidatorContext resolveObject(T object) {
+    public <T> ValidatorContext resolveObject(T object) throws ValidationException {
         Field[] fields;
         Annotation[] annotations;
 
@@ -45,9 +48,7 @@ public class ValidationProvider {
         for (Field field : fields) {
             //Check if that field is accessible
             if (!field.trySetAccessible()) {
-                configViolations.add(
-                        new Violation(object,"Fails to access object's field "+field.getName())
-                );
+                System.err.println("Warning! Field " + field.getName() + " in " + object.getClass().getName() + " are not accessible");
                 continue;
             }
 
@@ -70,7 +71,7 @@ public class ValidationProvider {
                     if (validateBy == null) {
                         // No Validator Class is assigned.
                         System.err.println("Warning! Not found validatedBy for annotation @" + annotation.annotationType());
-                        continue;
+                        throw new ValidatorNotFoundException("Not found validatedBy for annotation @" + annotation.annotationType());
                     }
 
                     // Retrieve the @ValidatedBy Class
@@ -80,10 +81,10 @@ public class ValidationProvider {
                     if (!hasParameterlessPublicConstructor(validatorImpl)) {
                         // No Validator Class is assigned.
                         System.err.println("Warnning! @" + annotation.annotationType() + " should implement Empty constructor for Provider to resolve");
-                        continue;
+                        throw new ValidatorDeclarationException(" @" + annotation.annotationType() + " should implement Empty constructor for Provider to resolve");
                     }
-                    try {
 
+                    try {
                         Validator validator = validatorImpl.getDeclaredConstructor().newInstance();
 
                         //Call init
@@ -96,10 +97,7 @@ public class ValidationProvider {
 
                     } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
                         System.err.println("Warning! Unexpected error found at " + annotation.annotationType());
-                        e.printStackTrace();
-                        configViolations.add(
-                                new Violation(object, e.getLocalizedMessage() + "at" + field.getName())
-                        );
+                        throw new ProviderResolveException("Unexpected error found at " + annotation.annotationType(), e);
                     }
                 }
                 // Register chain

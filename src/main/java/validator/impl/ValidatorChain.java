@@ -2,7 +2,7 @@ package validator.impl;
 
 import violation.Violation;
 import utils.exceptions.ValidatorNotFoundException;
-import utils.exceptions.ViolationException;
+import utils.exceptions.ValidationException;
 import validator.ChainPrototype;
 import validator.Validator;
 
@@ -11,7 +11,7 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     private Validator<T> tail;
 
     @Override
-    public Violation validate(T value) throws ViolationException {
+    public Violation validate(T value) throws ValidationException {
         if (head == null) return null;
         return head.validate(value);
     }
@@ -38,7 +38,7 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     }
 
     @Override
-    public Validator<T> find(Class<Validator<T>> target) throws ValidatorNotFoundException {
+    public Validator<T> find(Class<Validator<T>> target) {
         var temp = head;
         while (temp != null){
             if(temp.getClass().equals(target)){
@@ -46,7 +46,7 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
             }
             temp = temp.getNext();
         }
-        throw new ValidatorNotFoundException();
+        return null;
     }
 
     // add from top

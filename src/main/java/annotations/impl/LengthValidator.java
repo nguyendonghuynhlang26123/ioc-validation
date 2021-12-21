@@ -28,14 +28,13 @@ public class LengthValidator extends BaseValidator<Length,String> {
     }
 
     @Override
-    public Class<String> acceptType() {
+    public Class<String> supportType() {
         return String.class;
     }
 
     @Override
-    public Violation violationBuilder(String value) {
-        return new Violation(value,
-                value+" has length violate min = "+min+", max = "+max);
+    public String violationMessage(String value) {
+        return value +  " not have length from "+min+" to "+max;
     }
 
     @Override

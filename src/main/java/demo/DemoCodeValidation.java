@@ -1,7 +1,7 @@
 package demo;
 
 import builder.ValidatorBuilder;
-import utils.exceptions.ViolationException;
+import utils.exceptions.ValidationException;
 
 public class DemoCodeValidation {
     public void demo(String input){
@@ -10,7 +10,7 @@ public class DemoCodeValidation {
                     .notEmpty()
                     .length(6)
                     .build().validate(input);
-        } catch (ViolationException e){
+        } catch (ValidationException e){
             // TODO: catch errors here???
             e.printStackTrace();
         }
