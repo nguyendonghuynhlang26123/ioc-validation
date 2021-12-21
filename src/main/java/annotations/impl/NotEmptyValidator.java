@@ -1,13 +1,9 @@
 package annotations.impl;
 
 import annotations.NotEmpty;
-import utils.Violation;
-import utils.exceptions.InvalidValueException;
-import utils.exceptions.ViolationException;
+import violation.Violation;
 import validator.Validator;
 import validator.impl.BaseValidator;
-
-import java.util.Collection;
 
 public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
     @Override

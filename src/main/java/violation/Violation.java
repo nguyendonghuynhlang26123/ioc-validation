@@ -1,4 +1,4 @@
-package utils;
+package violation;
 
 //TODO: Using builder to build violations
 public class Violation {

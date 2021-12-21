@@ -1,7 +1,7 @@
 package annotations.impl;
 
 import annotations.Max;
-import utils.Violation;
+import violation.Violation;
 import validator.Validator;
 import validator.impl.BaseValidator;
 

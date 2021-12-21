@@ -1,12 +1,10 @@
 package validator.impl;
 
-import utils.Violation;
+import violation.Violation;
 import utils.exceptions.ValidatorNotFoundException;
 import utils.exceptions.ViolationException;
 import validator.ChainPrototype;
 import validator.Validator;
-
-import java.lang.annotation.Annotation;
 
 public class ValidatorChain<T> implements ChainPrototype<T> {
     private Validator<T> head;

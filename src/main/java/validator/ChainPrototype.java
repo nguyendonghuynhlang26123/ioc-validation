@@ -1,6 +1,6 @@
 package validator;
 
-import utils.Violation;
+import violation.Violation;
 import utils.exceptions.ValidatorNotFoundException;
 
 public interface ChainPrototype<T> {
