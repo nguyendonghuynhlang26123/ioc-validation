@@ -1,7 +1,7 @@
 package validator.impl;
 
 import annotations.ValidatedBy;
-import utils.exceptions.EmptyConstructorNotFoundException;
+import utils.exceptions.ValidatorDeclarationException;
 import utils.exceptions.ProviderResolveException;
 import utils.exceptions.ValidationException;
 import utils.exceptions.ValidatorNotFoundException;
@@ -81,11 +81,10 @@ public class ValidationProvider {
                     if (!hasParameterlessPublicConstructor(validatorImpl)) {
                         // No Validator Class is assigned.
                         System.err.println("Warnning! @" + annotation.annotationType() + " should implement Empty constructor for Provider to resolve");
-                        throw new EmptyConstructorNotFoundException(" @" + annotation.annotationType() + " should implement Empty constructor for Provider to resolve");
+                        throw new ValidatorDeclarationException(" @" + annotation.annotationType() + " should implement Empty constructor for Provider to resolve");
                     }
 
                     try {
-
                         Validator validator = validatorImpl.getDeclaredConstructor().newInstance();
 
                         //Call init

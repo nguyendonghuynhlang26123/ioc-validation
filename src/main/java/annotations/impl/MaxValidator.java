@@ -21,13 +21,13 @@ public class MaxValidator extends BaseValidator<Max, Number> {
     }
 
     @Override
-    public Class<Number> acceptType() {
+    public Class<Number> supportType() {
         return Number.class;
     }
 
     @Override
-    public Violation violationBuilder(Number value) {
-        return new Violation(value,"Value should not be greater than " + this.max);
+    public String violationMessage(Number value) {
+        return "Value should not be greater than " + this.max;
     }
 
     @Override

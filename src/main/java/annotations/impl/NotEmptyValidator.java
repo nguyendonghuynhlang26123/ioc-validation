@@ -15,13 +15,13 @@ public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
     }
 
     @Override
-    public Class<String> acceptType() {
+    public Class<String> supportType() {
         return String.class;
     }
 
     @Override
-    public Violation violationBuilder(String value) {
-        return new Violation(value,"Empty value");
+    public String violationMessage(String value) {
+        return "Value should not be empty";
     }
 
     @Override
