@@ -1,7 +1,8 @@
 package validator.impl;
 
+import utils.exceptions.ValidationException;
 import violation.Violation;
-import utils.exceptions.InvalidTypeException;
+import utils.exceptions.UnexpectedTypeException;
 import validator.Validator;
 
 import java.lang.annotation.Annotation;
@@ -23,11 +24,11 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
     }
 
     @Override
-    public final Violation validate(T value) throws InvalidTypeException {
+    public final Violation validate(T value) throws ValidationException {
         Class<?> myType = acceptType();
         Class<?> valueType = value.getClass();
         if (!myType.isAssignableFrom(valueType)){
-            throw new InvalidTypeException(this.getClass().getSimpleName()+" invalid type access");
+            throw new UnexpectedTypeException(this.getClass().getSimpleName()+" invalid type access");
         }
         if (!this.isValid(value)){
             return violationBuilder(value);

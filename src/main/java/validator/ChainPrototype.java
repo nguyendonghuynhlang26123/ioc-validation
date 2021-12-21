@@ -10,7 +10,7 @@ public interface ChainPrototype<T> {
     //Chain methods
     ChainPrototype<T> insert(Validator<T> validator);
     ChainPrototype<T> append(Validator<T> validator);
-    Validator<T> find(Class<Validator<T>> target) throws ValidatorNotFoundException;
+    Validator<T> find(Class<Validator<T>> target);
 
     //Business logic method
     Violation validate(T value);
