@@ -1,6 +1,6 @@
 package validator.impl;
 
-import utils.Violation;
+import violation.Violation;
 import utils.exceptions.InvalidTypeException;
 import validator.Validator;
 

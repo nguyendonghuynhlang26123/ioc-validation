@@ -1,9 +1,7 @@
 package annotations.impl;
 
 import annotations.Length;
-import utils.Violation;
-import utils.exceptions.InvalidValueException;
-import utils.exceptions.ViolationException;
+import violation.Violation;
 import validator.Validator;
 import validator.impl.BaseValidator;
 

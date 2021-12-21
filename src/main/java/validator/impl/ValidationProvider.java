@@ -2,18 +2,18 @@ package validator.impl;
 
 import annotations.ValidatedBy;
 import utils.exceptions.InvalidTypeException;
-import utils.exceptions.ViolationException;
-import utils.Violation;
+import validator.ChainPrototype;
+import violation.Violation;
 import validator.Validator;
+import violation.ViolationHandler;
+import violation.impl.LoggingViolation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 //Singleton
 public class ValidationProvider {
@@ -27,18 +27,25 @@ public class ValidationProvider {
     }
 
     //Read each fields of the object
-    public <T> Collection<Violation> validate(T object) {
+    public <T> ValidatorContext resolveObject(T object) {
         Field[] fields;
         Annotation[] annotations;
 
-        List<Violation> violationList = new LinkedList<>();
+        List<Violation> configViolations = new LinkedList<>();
+        Map<String, ChainPrototype> chains = new HashMap<>();
+        Map<String, Object> values = new HashMap<>();
+        ViolationHandler violationHandler = new ViolationHandler();
+
+        // may scan for annotations like @AlertBy(LoggingViolation.class)
+        // example
+        violationHandler.subscribe(new LoggingViolation());
 
         fields = object.getClass().getDeclaredFields();
         // For each field in class
         for (Field field : fields) {
             //Check if that field is accessible
             if (!field.trySetAccessible()) {
-                violationList.add(
+                configViolations.add(
                         new Violation(object,"Fails to access object's field "+field.getName())
                 );
                 continue;
@@ -90,7 +97,7 @@ public class ValidationProvider {
                     } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
                         System.err.println("Warning! Unexpected error found at " + annotation.annotationType());
                         e.printStackTrace();
-                        violationList.add(
+                        configViolations.add(
                                 new Violation(object, e.getLocalizedMessage() + "at" + field.getName())
                         );
                     }
@@ -101,16 +108,18 @@ public class ValidationProvider {
 
             // Start chain validating
             try {
-                var violation = validatorChain.validate(field.get(object));
-                if (violation != null){
-                    violationList.add(violation);
-                }
-            } catch (IllegalAccessException | InvalidTypeException e) {
+//                var violation = validatorChain.validate(field.get(object));
+//                if (violation != null){
+//                    violationList.add(violation);
+//                }
+                chains.put(field.getName(), validatorChain);
+                values.put(field.getName(), field.get(object));
+            } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
 
-        return violationList;
+        return new ValidatorContext(violationHandler, chains, values, configViolations);
     }
 
     private boolean hasParameterlessPublicConstructor(Class<?> clazz) {

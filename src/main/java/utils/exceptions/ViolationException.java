@@ -1,9 +1,5 @@
 package utils.exceptions;
 
-import utils.Violation;
-
-import java.lang.reflect.Field;
-
 /***
  * Don't use this
  */

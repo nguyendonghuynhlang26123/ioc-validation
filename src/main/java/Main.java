@@ -7,7 +7,7 @@ public class Main {
         Student s2 = new Student("", "");
         Student s3 = new Student("test", "test@test");
 
-        s1.validate().forEach(System.out::println);
+        s1.validate();
 //        s2.validate().forEach(System.out::println);
 //        s3.validate().forEach(System.out::println);
 

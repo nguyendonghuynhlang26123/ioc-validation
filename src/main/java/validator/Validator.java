@@ -1,6 +1,6 @@
 package validator;
 
-import utils.Violation;
+import violation.Violation;
 import utils.exceptions.InvalidTypeException;
 
 public interface Validator<T> {
