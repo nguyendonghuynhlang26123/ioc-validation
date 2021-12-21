@@ -6,14 +6,19 @@ import utils.exceptions.ValidationException;
 import validator.ChainPrototype;
 import validator.Validator;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 public class ValidatorChain<T> implements ChainPrototype<T> {
     private Validator<T> head;
     private Validator<T> tail;
 
     @Override
-    public Violation validate(T value) throws ValidationException {
+    public Collection<Violation> validate(T value) throws ValidationException {
         if (head == null) return null;
-        return head.validate(value);
+        Collection<Violation> violations = new LinkedList<>();
+        head.validate(value, violations);
+        return violations;
     }
 
     @Override

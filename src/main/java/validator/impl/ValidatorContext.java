@@ -4,10 +4,9 @@ import validator.ChainPrototype;
 import violation.Violation;
 import violation.ViolationHandler;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ValidatorContext {
     private ViolationHandler violationHandler;
@@ -31,11 +30,13 @@ public class ValidatorContext {
         this.violations = configViolations;
     }
 
-    public void validate(){
-        var validationViolations = chains.entrySet().stream().map(e->{
+    public Collection<Violation> validate(){
+        List<Violation> validationViolations = new LinkedList<>();
+        chains.entrySet().stream().map(e->{
            return e.getValue().validate(values.get(e.getKey()));
-        }).collect(Collectors.toList());
+        }).forEach(validationViolations::addAll);
         violations.addAll(validationViolations);
         violationHandler.notify(violations);
+        return violations;
     }
 }

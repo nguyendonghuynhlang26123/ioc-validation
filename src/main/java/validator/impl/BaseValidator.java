@@ -6,6 +6,9 @@ import utils.exceptions.UnexpectedTypeException;
 import validator.Validator;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 
 public abstract class BaseValidator<Ctx extends Annotation,T> implements Validator<T> {
     private Validator<T> next;
@@ -24,18 +27,17 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
     }
 
     @Override
-    public final Violation validate(T value) throws ValidationException {
+    public final void validate(T value, Collection<Violation> violations) throws UnexpectedTypeException {
         Class<?> myType = supportType();
         Class<?> valueType = value.getClass();
         if (!myType.isAssignableFrom(valueType)){
             throw new UnexpectedTypeException(this.getClass().getSimpleName()+" invalid type access");
         }
         if (!this.isValid(value)){
-            return new Violation(value, violationMessage(value));
+            violations.add(new Violation(value, violationMessage(value)));
         }
         if( next != null){
-            return next.validate(value);
+            next.validate(value, violations);
         }
-        return null;
     }
 }

@@ -6,9 +6,9 @@ import validator.impl.ValidationProvider;
 import java.util.Collection;
 
 public interface Validatable {
-    default void validate(){
+    default Collection<Violation> validate(){
         ValidationProvider validationProvider = ValidationProvider.getInstance();
         var ctx = validationProvider.resolveObject(this);
-        ctx.validate();
+        return ctx.validate();
     }
 }
