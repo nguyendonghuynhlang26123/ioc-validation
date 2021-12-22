@@ -1,7 +1,7 @@
-package violation.impl;
+package handler.impl;
 
 import violation.Violation;
-import violation.ViolationListener;
+import handler.ViolationListener;
 
 import java.util.Collection;
 

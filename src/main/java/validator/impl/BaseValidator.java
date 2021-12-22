@@ -1,14 +1,11 @@
 package validator.impl;
 
-import utils.exceptions.ValidationException;
 import violation.Violation;
 import utils.exceptions.UnexpectedTypeException;
 import validator.Validator;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
 
 public abstract class BaseValidator<Ctx extends Annotation,T> implements Validator<T> {
     private Validator<T> next;
@@ -27,7 +24,7 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
     }
 
     @Override
-    public final void validate(T value, Collection<Violation> violations) throws UnexpectedTypeException {
+    public final void processValidation(T value, Collection<Violation> violations) throws UnexpectedTypeException {
         Class<?> myType = supportType();
         Class<?> valueType = value.getClass();
         if (!myType.isAssignableFrom(valueType)){
@@ -37,7 +34,7 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
             violations.add(new Violation(value, violationMessage(value)));
         }
         if( next != null){
-            next.validate(value, violations);
+            next.processValidation(value, violations);
         }
     }
 }

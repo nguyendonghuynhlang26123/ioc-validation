@@ -1,10 +1,12 @@
-package violation;
+package handler;
+
+import violation.Violation;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class ViolationHandler {
-    private Collection<ViolationListener> listeners = new ArrayList<>();
+    private final Collection<ViolationListener> listeners = new ArrayList<>();
 
     public void subscribe(ViolationListener subscriber){
         listeners.add(subscriber);

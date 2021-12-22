@@ -2,6 +2,7 @@ package builder;
 
 import annotations.impl.LengthValidator;
 import annotations.impl.NotEmptyValidator;
+import handler.ViolationHandler;
 import validator.ChainPrototype;
 import validator.Validator;
 import validator.impl.ValidatorChain;
@@ -9,10 +10,18 @@ import validator.impl.ValidatorChain;
 public class ValidatorBuilder<T> {
     Class<T> type;
     ChainPrototype<T> validatorChain;
+    ViolationHandler handler;
 
     public ValidatorBuilder(Class<T> type) {
         this.type = type;
         validatorChain = new ValidatorChain<>();
+        handler = new ViolationHandler();
+    }
+
+    public ValidatorBuilder(Class<T> type, ViolationHandler handler) {
+        this.type = type;
+        validatorChain = new ValidatorChain<>();
+        this.handler = handler;
     }
 
     public ChainPrototype<T> build(){
@@ -28,6 +37,13 @@ public class ValidatorBuilder<T> {
         validatorChain.append(validator);
     }
 
+    // Others
+    public ValidatorBuilder<T> handler(ViolationHandler handler){
+        this.handler = handler;
+        return this;
+    }
+
+    // ---------------------- Constraints ---------------------------------------
     public ValidatorBuilder<T> notEmpty(){
         this.addToChain(new NotEmptyValidator());
         return this;
@@ -42,7 +58,7 @@ public class ValidatorBuilder<T> {
         return this;
     }
 
-    //Strict rule
+    //Customize validator
     public ValidatorBuilder<T> addCustomValidator(Validator<T> validator){
         this.addToChain(validator);
         return this;

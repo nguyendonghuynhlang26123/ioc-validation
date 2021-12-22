@@ -1,5 +1,6 @@
 package validator.impl;
 
+import validator.Validatable;
 import violation.Violation;
 import utils.exceptions.ValidatorNotFoundException;
 import utils.exceptions.ValidationException;
@@ -9,7 +10,7 @@ import validator.Validator;
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class ValidatorChain<T> implements ChainPrototype<T> {
+public class ValidatorChain<T> implements ChainPrototype<T>, Validatable {
     private Validator<T> head;
     private Validator<T> tail;
 
@@ -17,7 +18,7 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     public Collection<Violation> validate(T value) throws ValidationException {
         if (head == null) return null;
         Collection<Violation> violations = new LinkedList<>();
-        head.validate(value, violations);
+        head.processValidation(value, violations);
         return violations;
     }
 

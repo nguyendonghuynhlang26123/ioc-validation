@@ -1,14 +1,15 @@
 package validator.impl;
 
 import validator.ChainPrototype;
+import validator.Validatable;
 import violation.Violation;
-import violation.ViolationHandler;
+import handler.ViolationHandler;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ValidatorContext {
+public class ValidatorContext implements Validatable {
     private ViolationHandler violationHandler;
     private Collection<Violation> violations;
     private Map<String, ChainPrototype> chains;
@@ -20,14 +21,6 @@ public class ValidatorContext {
         this.chains = chains;
         this.values = values;
         this.violations = new LinkedList<>();
-    }
-
-    public ValidatorContext(ViolationHandler violationHandler, Map<String, ChainPrototype> chains,
-                            Map<String, Object> values, Collection<Violation> configViolations) {
-        this.violationHandler = violationHandler;
-        this.chains = chains;
-        this.values = values;
-        this.violations = configViolations;
     }
 
     public Collection<Violation> validate(){

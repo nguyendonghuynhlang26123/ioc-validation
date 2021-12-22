@@ -1,4 +1,6 @@
-package violation;
+package handler;
+
+import violation.Violation;
 
 import java.util.Collection;
 
