@@ -39,7 +39,9 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
                 newChainTemp = newChainTemp.setNext(validator);
                 temp = temp.getNext();
             }
-            tail = newChainTemp.setNext(source.tail.cloneValidator());
+            if(source.tail != source.head){
+                tail = newChainTemp.setNext(source.tail.cloneValidator());
+            }
         }
     }
 

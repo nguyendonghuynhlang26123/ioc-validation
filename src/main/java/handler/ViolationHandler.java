@@ -18,8 +18,8 @@ public class ViolationHandler {
 
     public void notify(Violation data){
         listeners.forEach(violationListener -> {
-            if (violationListener.shouldHandle(data))
-                violationListener.handle(data);
+            if (violationListener.shouldProcess(data))
+                violationListener.process(data);
         });
     }
 }

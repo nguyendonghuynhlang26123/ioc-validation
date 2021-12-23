@@ -10,12 +10,20 @@ import java.util.Collection;
 public abstract class BaseValidator<Ctx extends Annotation,T> implements Validator<T> {
     private Validator<T> next;
     private Ctx ctx;
+    private String message;
 
     abstract public void onInit(Ctx ctx);
 
     public void initialize(Ctx ctx){
         this.ctx = ctx;
         onInit(ctx);
+    }
+
+    public BaseValidator(){}
+
+    public BaseValidator(BaseValidator<Ctx, T> other){
+        this.ctx = other.ctx;
+        this.message = other.message;
     }
 
     @Override

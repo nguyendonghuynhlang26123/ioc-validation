@@ -1,14 +1,12 @@
 package violation;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 
 public class Violation {
     Object object;
     String message;
     Annotation constraint;
     Class<?> rootClass;
-    String field;
 
     public Violation(Object object, String message) {
         this.object = object;
@@ -21,15 +19,13 @@ public class Violation {
         this.rootClass = object.getClass();
         this.message = message;
         this.constraint = constraint;
-        this.field = null;
     }
 
-    public Violation(Object object, String message, Annotation constraint, Class<?> rootClass, String field) {
+    public Violation(Object object, String message, Annotation constraint, Class<?> rootClass) {
         this.object = object;
         this.message = message;
         this.constraint = constraint;
         this.rootClass = rootClass;
-        this.field = field;
     }
 
     @Override
@@ -39,7 +35,6 @@ public class Violation {
                 ", message='" + message + "'" +
                 ", constraint='" + constraint + "'" +
                 ", class='" + rootClass.getSimpleName() + "'" +
-                (field != null ?  ", field='" + field + "'" : "")+
                 '}';
     }
 
@@ -60,6 +55,6 @@ public class Violation {
     }
 
     public void setField(String field) {
-        this.field = field;
+        message = "Field "+field+": "+message;
     }
 }

@@ -22,6 +22,12 @@ public class LengthValidator extends BaseValidator<Length,String> {
         this.max = max;
     }
 
+    public LengthValidator(LengthValidator other){
+        super(other);
+        this.min = other.min;
+        this.max = other.max;
+    }
+
     @Override
     public boolean isValid(String value) {
         return value.length() >= min && value.length() <= max;
@@ -39,6 +45,6 @@ public class LengthValidator extends BaseValidator<Length,String> {
 
     @Override
     public Validator<String> cloneValidator() {
-        return new LengthValidator(this.min, this.max);
+        return new LengthValidator(this);
     }
 }

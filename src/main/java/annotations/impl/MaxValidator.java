@@ -15,6 +15,11 @@ public class MaxValidator extends BaseValidator<Max, Number> {
         this.max = value;
     }
 
+    public MaxValidator(MaxValidator other){
+        super(other);
+        this.max = other.max;
+    }
+
     @Override
     public boolean isValid(Number value) {
         return value.doubleValue() <= this.max;
@@ -32,7 +37,7 @@ public class MaxValidator extends BaseValidator<Max, Number> {
 
     @Override
     public Validator<Number> cloneValidator() {
-        return new MaxValidator(this.max);
+        return new MaxValidator(this);
     }
 
     @Override

@@ -6,6 +6,8 @@ import validator.Validator;
 import validator.impl.BaseValidator;
 
 public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
+    public NotEmptyValidator(){}
+
     @Override
     public void onInit(NotEmpty notEmpty) {}
 
@@ -26,6 +28,10 @@ public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
 
     @Override
     public Validator<String> cloneValidator() {
-        return new NotEmptyValidator();
+        return new NotEmptyValidator(this);
+    }
+
+    protected NotEmptyValidator(NotEmptyValidator other) {
+        super(other);
     }
 }
