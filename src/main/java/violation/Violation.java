@@ -3,13 +3,12 @@ package violation;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
-//TODO: Using builder to build violations
 public class Violation {
     Object object;
     String message;
     Annotation constraint;
     Class<?> rootClass;
-    Field field;
+    String field;
 
     public Violation(Object object, String message) {
         this.object = object;
@@ -25,7 +24,7 @@ public class Violation {
         this.field = null;
     }
 
-    public Violation(Object object, String message, Annotation constraint, Class<?> rootClass, Field field) {
+    public Violation(Object object, String message, Annotation constraint, Class<?> rootClass, String field) {
         this.object = object;
         this.message = message;
         this.constraint = constraint;
@@ -36,11 +35,11 @@ public class Violation {
     @Override
     public String toString() {
         return "Violation{" +
-                "value='" + object +
-                "', message='" + message + '\'' +
-                ", constraint=" + constraint +
-                ", class=" + rootClass +
-                (field != null ?  ", field=" + field.getName() : "")+
+                "value='" + object + "'" +
+                ", message='" + message + "'" +
+                ", constraint='" + constraint + "'" +
+                ", class='" + rootClass.getSimpleName() + "'" +
+                (field != null ?  ", field='" + field + "'" : "")+
                 '}';
     }
 
@@ -60,7 +59,7 @@ public class Violation {
         return rootClass;
     }
 
-    public Field getField() {
-        return field;
+    public void setField(String field) {
+        this.field = field;
     }
 }

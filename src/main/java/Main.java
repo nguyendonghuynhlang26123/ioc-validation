@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         Student s1 = new Student("Long", "", 4);
         Student s2 = new Student("", "",20);
-        Student s3 = new Student("test", "test@test", 18);
+        Student s3 = new Student("test", "test@test", 28);
 
         ValidationProvider validationProvider = ValidationProvider.getInstance();
         validationProvider.registerHandler(new LoggingViolation());
