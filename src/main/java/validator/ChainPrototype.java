@@ -16,6 +16,6 @@ public interface ChainPrototype<T> {
     Validator<T> find(Class<Validator<T>> target);
 
     //Business logic method
-    Collection<Violation> validate(T value);
+    Collection<Violation> processValidation(T value);
     void validateAndThrow(T value);
 }

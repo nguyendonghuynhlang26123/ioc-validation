@@ -10,12 +10,12 @@ import validator.Validator;
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class ValidatorChain<T> implements ChainPrototype<T>, Validatable {
+public class ValidatorChain<T> implements ChainPrototype<T> {
     private Validator<T> head;
     private Validator<T> tail;
 
     @Override
-    public Collection<Violation> validate(T value) throws ValidationException {
+    public Collection<Violation> processValidation(T value) throws ValidationException {
         if (head == null) return null;
         Collection<Violation> violations = new LinkedList<>();
         head.processValidation(value, violations);

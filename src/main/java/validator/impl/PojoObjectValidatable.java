@@ -22,9 +22,9 @@ public class PojoObjectValidatable implements Validatable {
     public Collection<Violation> validate(){
         List<Violation> violations = new LinkedList<>();
         chains.entrySet().stream().map(e->{
-           return e.getValue().validate(values.get(e.getKey()));
+           return e.getValue().processValidation(values.get(e.getKey()));
         }).forEach(violations::addAll);
-        violationHandler.notify(violations);
+        violations.forEach(violation -> violationHandler.notify(violation) );
         return violations;
     }
 }

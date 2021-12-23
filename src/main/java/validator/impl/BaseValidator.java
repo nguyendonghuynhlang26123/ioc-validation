@@ -9,8 +9,14 @@ import java.util.Collection;
 
 public abstract class BaseValidator<Ctx extends Annotation,T> implements Validator<T> {
     private Validator<T> next;
+    private Ctx ctx;
 
-    abstract public void initialize(Ctx ctx);
+    abstract public void onInit(Ctx ctx);
+
+    public void initialize(Ctx ctx){
+        this.ctx = ctx;
+        onInit(ctx);
+    }
 
     @Override
     public Validator<T> setNext(Validator<T> validator) {
@@ -31,7 +37,7 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
             throw new UnexpectedTypeException(this.getClass().getSimpleName()+" invalid type access");
         }
         if (!this.isValid(value)){
-            violations.add(new Violation(value, violationMessage(value)));
+            violations.add(new Violation(value, violationMessage(value), ctx));
         }
         if( next != null){
             next.processValidation(value, violations);

@@ -3,12 +3,12 @@ package demo;
 import builder.ValidatableBuilder;
 import utils.exceptions.ValidationException;
 import validator.Validatable;
+import validator.impl.ValidationProvider;
 
 public class DemoCodeValidation {
     public void demo(String input){
         try{
-            Validatable validatable = new ValidatableBuilder<>(String.class)
-                    .notEmpty()
+            Validatable validatable = ValidationProvider.getInstance().createValidatorBuilder(String.class)
                     .length(6)
                     .buildValidatable(input);
             validatable.validate();

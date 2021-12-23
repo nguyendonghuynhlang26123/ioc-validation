@@ -11,16 +11,15 @@ import validator.impl.SingleObjectValidatable;
 public class ValidatableBuilder<T> {
     Class<T> type;
     SingleObjectValidatable<T> validatableContext;
-    ViolationHandler handler;
 
     public ValidatableBuilder(Class<T> type) {
         this.type = type;
-        handler = new ViolationHandler();
+        validatableContext = new SingleObjectValidatable<>();
     }
 
     public ValidatableBuilder(Class<T> type, ViolationHandler handler) {
         this.type = type;
-        this.handler = handler;
+        validatableContext = new SingleObjectValidatable<>(handler);
     }
 
     public Validatable buildValidatable(T value){
@@ -38,7 +37,7 @@ public class ValidatableBuilder<T> {
 
     // Others
     public ValidatableBuilder<T> handler(ViolationHandler handler){
-        this.handler = handler;
+        validatableContext.setHandler(handler);
         return this;
     }
 

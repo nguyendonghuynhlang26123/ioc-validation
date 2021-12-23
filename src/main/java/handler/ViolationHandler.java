@@ -16,7 +16,10 @@ public class ViolationHandler {
         listeners.remove(subscriber);
     }
 
-    public void notify(Collection<Violation> data){
-        listeners.forEach(violationListener -> violationListener.update(data));
+    public void notify(Violation data){
+        listeners.forEach(violationListener -> {
+            if (violationListener.shouldHandle(data))
+                violationListener.handle(data);
+        });
     }
 }

@@ -36,7 +36,7 @@ public class MaxValidator extends BaseValidator<Max, Number> {
     }
 
     @Override
-    public void initialize(Max max) {
+    public void onInit(Max max) {
         this.max = max.value();
     }
 }

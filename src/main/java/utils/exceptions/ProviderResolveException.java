@@ -7,5 +7,6 @@ public class ProviderResolveException extends ValidationException {
 
     public ProviderResolveException(String message, Throwable cause) {
         super(message, cause);
+        cause.printStackTrace();
     }
 }

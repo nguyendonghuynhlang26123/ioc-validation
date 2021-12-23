@@ -6,9 +6,14 @@ import handler.ViolationListener;
 import java.util.Collection;
 
 public class LoggingViolation implements ViolationListener {
+    @Override
+    public void handle(Violation data) {
+        System.out.println(data);
+    }
 
     @Override
-    public void update(Collection<Violation> data) {
-        data.forEach(System.out::println);
+    public boolean shouldHandle(Violation data) {
+        //Handle every cases
+        return true;
     }
 }
