@@ -7,7 +7,7 @@ import java.util.Collection;
 
 public interface Validator<T> {
     boolean isValid(T value);
-    void validate(T value, Collection<Violation> violations) throws UnexpectedTypeException;
+    void processValidation(T value, Collection<Violation> violations) throws UnexpectedTypeException;
     Class<T> supportType();
     String violationMessage(T value);
 

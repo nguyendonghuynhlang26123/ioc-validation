@@ -10,7 +10,7 @@ public class LengthValidator extends BaseValidator<Length,String> {
     int max;
 
     @Override
-    public void initialize(Length length) {
+    public void onInit(Length length) {
         this.max = length.max();
         this.min = length.min();
     }

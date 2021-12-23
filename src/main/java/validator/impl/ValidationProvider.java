@@ -1,15 +1,16 @@
 package validator.impl;
 
 import annotations.ValidatedBy;
+import builder.ValidatableBuilder;
+import handler.ViolationListener;
 import utils.exceptions.ValidatorDeclarationException;
 import utils.exceptions.ProviderResolveException;
 import utils.exceptions.ValidationException;
 import utils.exceptions.ValidatorNotFoundException;
 import validator.ChainPrototype;
-import violation.Violation;
+import validator.Validatable;
 import validator.Validator;
-import violation.ViolationHandler;
-import violation.impl.LoggingViolation;
+import handler.ViolationHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -21,8 +22,11 @@ import java.util.*;
 //Singleton
 public class ValidationProvider {
     private static final ValidationProvider INSTANCE = new ValidationProvider();
+    private List<ViolationListener> listeners;
+
     // NOTE: SINGLETON PATTERN
     private ValidationProvider() {
+        listeners = new ArrayList<>();
     }
 
     public static ValidationProvider getInstance() {
@@ -30,18 +34,15 @@ public class ValidationProvider {
     }
 
     //Read each fields of the object
-    public <T> ValidatorContext resolveObject(T object) throws ValidationException {
+    public <T> Validatable resolveObject(T object) throws ValidationException {
         Field[] fields;
         Annotation[] annotations;
 
-        List<Violation> configViolations = new LinkedList<>();
         Map<String, ChainPrototype> chains = new HashMap<>();
         Map<String, Object> values = new HashMap<>();
         ViolationHandler violationHandler = new ViolationHandler();
 
-        // may scan for annotations like @AlertBy(LoggingViolation.class)
-        // example
-        violationHandler.subscribe(new LoggingViolation());
+        listeners.forEach(violationHandler::subscribe);
 
         fields = object.getClass().getDeclaredFields();
         // For each field in class
@@ -117,7 +118,7 @@ public class ValidationProvider {
             }
         }
 
-        return new ValidatorContext(violationHandler, chains, values, configViolations);
+        return new PojoObjectValidatable(violationHandler, chains, values);
     }
 
     private boolean hasParameterlessPublicConstructor(Class<?> clazz) {
@@ -127,5 +128,16 @@ public class ValidationProvider {
             }
         }
         return false;
+    }
+
+    public void registerHandler(ViolationListener listener){
+        listeners.add(listener);
+    }
+
+    public <T> ValidatableBuilder<T> createValidatorBuilder(Class<T> type){
+        ViolationHandler violationHandler = new ViolationHandler();
+        listeners.forEach(violationHandler::subscribe);
+
+        return new ValidatableBuilder<>(type, violationHandler);
     }
 }

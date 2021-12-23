@@ -1,5 +1,6 @@
 package validator.impl;
 
+import validator.Validatable;
 import violation.Violation;
 import utils.exceptions.ValidatorNotFoundException;
 import utils.exceptions.ValidationException;
@@ -14,10 +15,10 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     private Validator<T> tail;
 
     @Override
-    public Collection<Violation> validate(T value) throws ValidationException {
+    public Collection<Violation> processValidation(T value) throws ValidationException {
         if (head == null) return null;
         Collection<Violation> violations = new LinkedList<>();
-        head.validate(value, violations);
+        head.processValidation(value, violations);
         return violations;
     }
 

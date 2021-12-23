@@ -17,15 +17,11 @@ public class Student implements Validatable {
     String email;
 
     @Max(18)
-    BigDecimal number;
+    long age;
 
-    @Max(12)
-    private int data;
-
-    public Student(String name, String email) {
+    public Student(String name, String email, int age) {
         this.name = name;
         this.email = email;
-        number = BigDecimal.valueOf(18.4);
-        data = 4;
+        this.age = age;
     }
 }
