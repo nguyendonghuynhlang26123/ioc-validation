@@ -4,62 +4,61 @@ import annotations.impl.LengthValidator;
 import annotations.impl.NotEmptyValidator;
 import handler.ViolationHandler;
 import validator.ChainPrototype;
+import validator.Validatable;
 import validator.Validator;
-import validator.impl.ValidatorChain;
+import validator.impl.SingleObjectValidatable;
 
-public class ValidatorBuilder<T> {
+public class ValidatableBuilder<T> {
     Class<T> type;
-    ChainPrototype<T> validatorChain;
+    SingleObjectValidatable<T> validatableContext;
     ViolationHandler handler;
 
-    public ValidatorBuilder(Class<T> type) {
+    public ValidatableBuilder(Class<T> type) {
         this.type = type;
-        validatorChain = new ValidatorChain<>();
         handler = new ViolationHandler();
     }
 
-    public ValidatorBuilder(Class<T> type, ViolationHandler handler) {
+    public ValidatableBuilder(Class<T> type, ViolationHandler handler) {
         this.type = type;
-        validatorChain = new ValidatorChain<>();
         this.handler = handler;
     }
 
-    public ChainPrototype<T> build(){
-        return validatorChain;
+    public Validatable buildValidatable(T value){
+        validatableContext.setValue(value);
+        return validatableContext;
     }
 
-    public ValidatorBuilder<T> setChain(ChainPrototype<T> chain){
-        validatorChain = chain;
+    public ValidatableBuilder<T> setChain(ChainPrototype<T> chain){
         return this;
     }
 
     protected void addToChain(Validator validator){
-        validatorChain.append(validator);
+        validatableContext.addValidator(validator);
     }
 
     // Others
-    public ValidatorBuilder<T> handler(ViolationHandler handler){
+    public ValidatableBuilder<T> handler(ViolationHandler handler){
         this.handler = handler;
         return this;
     }
 
     // ---------------------- Constraints ---------------------------------------
-    public ValidatorBuilder<T> notEmpty(){
+    public ValidatableBuilder<T> notEmpty(){
         this.addToChain(new NotEmptyValidator());
         return this;
     }
 
-    public ValidatorBuilder<T> length(int min, int max){
+    public ValidatableBuilder<T> length(int min, int max){
         this.addToChain(new LengthValidator(min, max));
         return this;
     }
-    public ValidatorBuilder<T> length(int max){
+    public ValidatableBuilder<T> length(int max){
         this.addToChain(new LengthValidator(0, max));
         return this;
     }
 
     //Customize validator
-    public ValidatorBuilder<T> addCustomValidator(Validator<T> validator){
+    public ValidatableBuilder<T> addCustomValidator(Validator<T> validator){
         this.addToChain(validator);
         return this;
     }

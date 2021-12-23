@@ -1,7 +1,7 @@
 package validator.impl;
 
 import annotations.ValidatedBy;
-import builder.ValidatorBuilder;
+import builder.ValidatableBuilder;
 import handler.ViolationListener;
 import utils.exceptions.ValidatorDeclarationException;
 import utils.exceptions.ProviderResolveException;
@@ -118,7 +118,7 @@ public class ValidationProvider {
             }
         }
 
-        return new ValidatorContext(violationHandler, chains, values);
+        return new PojoObjectValidatable(violationHandler, chains, values);
     }
 
     private boolean hasParameterlessPublicConstructor(Class<?> clazz) {
@@ -134,10 +134,10 @@ public class ValidationProvider {
         listeners.add(listener);
     }
 
-    public <T> ValidatorBuilder<T>  getValidatorBuilder(Class<T> type){
+    public <T> ValidatableBuilder<T> createValidatorBuilder(Class<T> type){
         ViolationHandler violationHandler = new ViolationHandler();
         listeners.forEach(violationHandler::subscribe);
 
-        return new ValidatorBuilder<>(type, violationHandler);
+        return new ValidatableBuilder<>(type, violationHandler);
     }
 }

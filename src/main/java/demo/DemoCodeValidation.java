@@ -1,15 +1,17 @@
 package demo;
 
-import builder.ValidatorBuilder;
+import builder.ValidatableBuilder;
 import utils.exceptions.ValidationException;
+import validator.Validatable;
 
 public class DemoCodeValidation {
     public void demo(String input){
         try{
-            new ValidatorBuilder<>(String.class)
+            Validatable validatable = new ValidatableBuilder<>(String.class)
                     .notEmpty()
                     .length(6)
-                    .build().validate(input);
+                    .buildValidatable(input);
+            validatable.validate();
         } catch (ValidationException e){
             // TODO: catch errors here???
             e.printStackTrace();
