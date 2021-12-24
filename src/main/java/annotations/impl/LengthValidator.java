@@ -1,9 +1,8 @@
 package annotations.impl;
 
 import annotations.Length;
-import violation.Violation;
 import validator.Validator;
-import validator.impl.BaseValidator;
+import validator.BaseValidator;
 
 public class LengthValidator extends BaseValidator<Length,String> {
     int min;

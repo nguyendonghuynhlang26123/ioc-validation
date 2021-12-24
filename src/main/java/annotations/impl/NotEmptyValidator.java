@@ -1,9 +1,8 @@
 package annotations.impl;
 
 import annotations.NotEmpty;
-import violation.Violation;
 import validator.Validator;
-import validator.impl.BaseValidator;
+import validator.BaseValidator;
 
 public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
     public NotEmptyValidator(){}

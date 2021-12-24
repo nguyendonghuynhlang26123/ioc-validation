@@ -10,7 +10,7 @@ public class Main {
         Student s3 = new Student("test", "test@test", 28);
 
         ValidationProvider validationProvider = ValidationProvider.getInstance();
-        validationProvider.registerHandler(new LoggingViolation());
+        validationProvider.registerViolationListener(new LoggingViolation());
         s1.validate();
         System.out.println("-----");
         s2.validate();

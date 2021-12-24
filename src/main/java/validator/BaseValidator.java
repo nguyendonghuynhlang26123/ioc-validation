@@ -1,8 +1,7 @@
-package validator.impl;
+package validator;
 
 import violation.Violation;
 import utils.exceptions.UnexpectedTypeException;
-import validator.Validator;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;

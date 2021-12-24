@@ -9,6 +9,6 @@ public interface Validatable {
     default Collection<Violation> validate(){
         ValidationProvider validationProvider = ValidationProvider.getInstance();
         var ctx = validationProvider.resolveObject(this);
-        return ctx.validate();
+        return ctx.validate(this);
     }
 }
