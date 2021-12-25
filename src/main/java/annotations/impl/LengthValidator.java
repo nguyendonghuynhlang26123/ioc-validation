@@ -38,11 +38,6 @@ public class LengthValidator extends BaseValidator<Length,String> {
     }
 
     @Override
-    public String violationMessage(String value) {
-        return value +  " not have length from "+min+" to "+max;
-    }
-
-    @Override
     public Validator<String> cloneValidator() {
         return new LengthValidator(this);
     }

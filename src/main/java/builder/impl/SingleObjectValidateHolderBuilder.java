@@ -12,10 +12,6 @@ import validator.impl.SingleObjectValidateHolder;
 public class SingleObjectValidateHolderBuilder<T> implements ValidateHolderBuilder<T> {
     SingleObjectValidateHolder<T> validateHolder;
 
-    public SingleObjectValidateHolderBuilder() {
-        validateHolder = new SingleObjectValidateHolder<T>();
-    }
-
     public SingleObjectValidateHolderBuilder(ViolationHandler handler) {
         validateHolder = new SingleObjectValidateHolder<>(handler);
     }

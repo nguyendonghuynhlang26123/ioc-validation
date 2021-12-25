@@ -9,4 +9,6 @@ import java.lang.annotation.*;
 public @interface Length {
     int min() default 0;
     int max();
+
+    String message() default "Invalid length";
 }
