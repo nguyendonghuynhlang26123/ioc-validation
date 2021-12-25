@@ -29,14 +29,10 @@ public class ViolationContext {
     }
 
     public ViolationContext addViolation(String message, Object validatingValue, Class<? extends Annotation> constraintClass){
-        ViolationBuilder builder = new ViolationBuilder();
-        violations.add(builder
-                .root(rootObject)
-                .field(field)
-                .constraint(constraintClass)
-                .message(message)
-                .value(validatingValue)
-                .build());
+        Violation violation = new Violation(validatingValue, message, constraintClass);
+        if (rootObject != null) violation.setRootClass(rootObject.getClass());
+        if (field != null) violation.setField(field);
+        violations.add(violation);
         return this;
     }
 }

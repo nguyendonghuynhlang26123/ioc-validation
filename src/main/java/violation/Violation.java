@@ -10,19 +10,6 @@ public class Violation {
     Class<?> rootClass;
     Field field;
 
-    public Violation() {
-    }
-
-    public Violation(String message) {
-        this.message = message;
-    }
-
-    public Violation(Object object, String message) {
-        this.object = object;
-        this.message = message;
-        this.rootClass = object.getClass();
-    }
-
     public Violation(Object object, String message, Class<? extends Annotation> constraint) {
         this.object = object;
         this.rootClass = object.getClass();
@@ -43,7 +30,8 @@ public class Violation {
                 "value='" + object + "'" +
                 ", message='" + message + "'" +
                 ", constraint='" + constraintClass.getSimpleName() + "'" +
-                ", class='" + rootClass.getSimpleName() + "'" +
+                ", class='" + rootClass.getName() + "'" +
+                ( field != null ? (", field='" + field.getName() + "'") : "") +
                 '}';
     }
 
