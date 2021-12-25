@@ -1,9 +1,8 @@
 package annotations.impl;
 
 import annotations.Max;
-import violation.Violation;
 import validator.Validator;
-import validator.impl.BaseValidator;
+import validator.BaseValidator;
 
 public class MaxValidator extends BaseValidator<Max, Number> {
     long max;

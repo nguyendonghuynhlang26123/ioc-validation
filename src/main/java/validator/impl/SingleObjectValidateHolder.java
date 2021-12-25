@@ -4,21 +4,20 @@ import handler.ViolationHandler;
 import validator.ChainPrototype;
 import validator.Validatable;
 import validator.Validator;
+import validator.ValidatorHolder;
 import violation.Violation;
 
 import java.util.Collection;
 
-public class SingleObjectValidatable<T> implements Validatable {
+public class SingleObjectValidateHolder<T> extends ValidatorHolder<T> {
     ChainPrototype<T> chainPrototype;
-    ViolationHandler handler;
-    T value;
 
-    public SingleObjectValidatable() {
+    public SingleObjectValidateHolder() {
         this.chainPrototype = new ValidatorChain<>();
         handler = new ViolationHandler();
     }
 
-    public SingleObjectValidatable(ViolationHandler handler) {
+    public SingleObjectValidateHolder(ViolationHandler handler) {
         this.chainPrototype = new ValidatorChain<>();
         this.handler = handler;
     }
@@ -31,16 +30,8 @@ public class SingleObjectValidatable<T> implements Validatable {
         this.chainPrototype = chainPrototype;
     }
 
-    public void setValue(T value) {
-        this.value = value;
-    }
-
-    public void setHandler(ViolationHandler handler) {
-        this.handler = handler;
-    }
-
     @Override
-    public Collection<Violation> validate() {
+    public Collection<Violation> validate(T value) {
         Collection<Violation> result = chainPrototype.processValidation(value);
         result.forEach(violation -> handler.notify(violation));
         return result;

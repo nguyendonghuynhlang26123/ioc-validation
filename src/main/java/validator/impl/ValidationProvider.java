@@ -1,7 +1,8 @@
 package validator.impl;
 
 import annotations.ValidatedBy;
-import builder.ValidatableBuilder;
+import builder.ValidateHolderBuilder;
+import builder.impl.SingleObjectValidateHolderBuilder;
 import handler.ViolationListener;
 import utils.exceptions.ValidatorDeclarationException;
 import utils.exceptions.ProviderResolveException;
@@ -11,6 +12,7 @@ import validator.ChainPrototype;
 import validator.Validatable;
 import validator.Validator;
 import handler.ViolationHandler;
+import validator.ValidatorHolder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -22,11 +24,13 @@ import java.util.*;
 //Singleton
 public class ValidationProvider {
     private static final ValidationProvider INSTANCE = new ValidationProvider();
-    private List<ViolationListener> listeners;
+    private final ViolationHandler violationHandler;
+    private final Map<Class, ValidatorHolder> holderRegistry;
 
     // NOTE: SINGLETON PATTERN
     private ValidationProvider() {
-        listeners = new ArrayList<>();
+        violationHandler = new ViolationHandler();
+        holderRegistry = new HashMap<>();
     }
 
     public static ValidationProvider getInstance() {
@@ -34,15 +38,17 @@ public class ValidationProvider {
     }
 
     //Read each fields of the object
-    public <T> Validatable resolveObject(T object) throws ValidationException {
+    public <T> ValidatorHolder<T> resolveObject(T object) throws ValidationException {
+
+        // Search for stored validator holders
+        if (holderRegistry.containsKey(object.getClass())){
+            return holderRegistry.get(object.getClass());
+        }
+
         Field[] fields;
         Annotation[] annotations;
 
         Map<String, ChainPrototype> chains = new HashMap<>();
-        Map<String, Object> values = new HashMap<>();
-        ViolationHandler violationHandler = new ViolationHandler();
-
-        listeners.forEach(violationHandler::subscribe);
 
         fields = object.getClass().getDeclaredFields();
         // For each field in class
@@ -105,20 +111,12 @@ public class ValidationProvider {
                 ChainRegistry.getInstance().register(chainKey, validatorChain);
             }
 
-            // Start chain validating
-            try {
-//                var violation = validatorChain.validate(field.get(object));
-//                if (violation != null){
-//                    violationList.add(violation);
-//                }
-                chains.put(field.getName(), validatorChain);
-                values.put(field.getName(), field.get(object));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            chains.put(field.getName(), validatorChain);
         }
 
-        return new PojoObjectValidatable(violationHandler, chains, values);
+        ValidatorHolder<T> holder = new PojoValidateHolder<T>(violationHandler, chains);
+        holderRegistry.put(object.getClass(), holder);
+        return holder;
     }
 
     private boolean hasParameterlessPublicConstructor(Class<?> clazz) {
@@ -130,14 +128,13 @@ public class ValidationProvider {
         return false;
     }
 
-    public void registerHandler(ViolationListener listener){
-        listeners.add(listener);
+    public void registerViolationListener(ViolationListener listener){
+        violationHandler.subscribe(listener);
     }
 
-    public <T> ValidatableBuilder<T> createValidatorBuilder(Class<T> type){
-        ViolationHandler violationHandler = new ViolationHandler();
-        listeners.forEach(violationHandler::subscribe);
+    public void removeViolationListener(ViolationListener listener){violationHandler.unsubscribe(listener);}
 
-        return new ValidatableBuilder<>(type, violationHandler);
+    public <T> ValidateHolderBuilder<T> createSingleValidatorBuilder(){
+        return new SingleObjectValidateHolderBuilder<T>(violationHandler);
     }
 }
