@@ -30,11 +30,6 @@ public class MaxValidator extends BaseValidator<Max, Number> {
     }
 
     @Override
-    public String violationMessage(Number value) {
-        return "Value should not be greater than " + this.max;
-    }
-
-    @Override
     public Validator<Number> cloneValidator() {
         return new MaxValidator(this);
     }

@@ -8,4 +8,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @ValidatedBy(clazz = NotEmptyValidator.class)
 public @interface NotEmpty {
+    String message() default "Value should not be empty!";
 }

@@ -21,11 +21,6 @@ public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
     }
 
     @Override
-    public String violationMessage(String value) {
-        return "Value should not be empty";
-    }
-
-    @Override
     public Validator<String> cloneValidator() {
         return new NotEmptyValidator(this);
     }

@@ -12,4 +12,5 @@ import java.lang.annotation.Target;
 @ValidatedBy(clazz = MaxValidator.class)
 public @interface Max {
     long value();
+    String message() default "Your value should not greater than MAX";
 }

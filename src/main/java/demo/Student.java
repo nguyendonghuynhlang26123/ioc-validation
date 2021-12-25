@@ -5,18 +5,15 @@ import annotations.Max;
 import annotations.NotEmpty;
 import validator.Validatable;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 public class Student implements Validatable {
-    @NotEmpty
+    @NotEmpty(message = "Name should not be empty")
     String name;
 
     @NotEmpty
-    @Length(max = 4)
+    @Length(max = 4, message = "Email length should has less than 4 characters")
     String email;
 
-    @Max(18)
+    @Max(value = 18, message = "Age must < 18")
     long age;
 
     public Student(String name, String email, int age) {
