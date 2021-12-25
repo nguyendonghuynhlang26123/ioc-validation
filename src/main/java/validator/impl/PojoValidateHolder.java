@@ -1,5 +1,6 @@
 package validator.impl;
 
+import utils.exceptions.NullValueException;
 import validator.ChainPrototype;
 import validator.ValidatorHolder;
 import violation.Violation;
@@ -27,6 +28,7 @@ public class PojoValidateHolder<T> extends ValidatorHolder<T> {
 
     @Override
     public Collection<Violation> validate(T value){
+        if (value == null) throw new NullValueException("Cannot validate null value");
         var fieldMap = getAllFields(value);
         List<Violation> violations = new LinkedList<>();
 

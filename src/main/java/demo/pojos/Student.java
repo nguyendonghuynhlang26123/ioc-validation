@@ -1,4 +1,4 @@
-package demo;
+package demo.pojos;
 
 import annotations.Length;
 import annotations.Max;

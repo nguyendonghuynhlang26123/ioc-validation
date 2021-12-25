@@ -13,6 +13,6 @@ public class LoggingViolation implements ViolationListener {
     public boolean shouldProcess(Violation data) {
         //Handle every cases
         //TODO: test
-        return data.getRootClass().equals(String.class);
+        return true;
     }
 }
