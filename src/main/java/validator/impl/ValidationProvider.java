@@ -38,31 +38,31 @@ public class ValidationProvider {
     }
 
     //Read each fields of the object
-    public <T> ValidatorHolder<T> resolveObject(T object) throws ValidationException {
+    public  ValidatorHolder resolveObject(Class<?> objectClass) throws ValidationException {
 
         // Search for stored validator holders
-        if (holderRegistry.containsKey(object.getClass())){
-            return holderRegistry.get(object.getClass());
+        if (holderRegistry.containsKey(objectClass)){
+            return holderRegistry.get(objectClass);
         }
 
         Field[] fields;
         Annotation[] annotations;
 
-        Map<String, ChainPrototype> chains = new HashMap<>();
+        Map<String, ChainPrototype> chainMap = new HashMap<>();
 
-        fields = object.getClass().getDeclaredFields();
+        fields = objectClass.getDeclaredFields();
         // For each field in class
         for (Field field : fields) {
             //Check if that field is accessible
             if (!field.trySetAccessible()) {
-                System.err.println("Warning! Field " + field.getName() + " in " + object.getClass().getName() + " are not accessible");
+                System.err.println("Warning! Field " + field.getName() + " in " + objectClass.getName() + " are not accessible");
                 continue;
             }
 
             annotations = field.getDeclaredAnnotations();
 
             // Get chain from store
-            String chainKey = object.getClass().getSimpleName()+"."+field.getName();
+            String chainKey = objectClass.getSimpleName()+"."+field.getName();
             var validatorChain = ChainRegistry.getInstance().getChain(chainKey);
 
             // No prototype found
@@ -111,11 +111,11 @@ public class ValidationProvider {
                 ChainRegistry.getInstance().register(chainKey, validatorChain);
             }
 
-            chains.put(field.getName(), validatorChain);
+            chainMap.put(field.getName(), validatorChain);
         }
 
-        ValidatorHolder<T> holder = new PojoValidateHolder<T>(violationHandler, chains);
-        holderRegistry.put(object.getClass(), holder);
+        ValidatorHolder<?> holder = new PojoValidateHolder<>(violationHandler, chainMap);
+        holderRegistry.put(objectClass, holder);
         return holder;
     }
 

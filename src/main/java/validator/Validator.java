@@ -2,12 +2,11 @@ package validator;
 
 import violation.Violation;
 import utils.exceptions.UnexpectedTypeException;
-
-import java.util.Collection;
+import violation.ViolationContext;
 
 public interface Validator<T> {
     boolean isValid(T value);
-    void processValidation(T value, Collection<Violation> violations) throws UnexpectedTypeException;
+    void processValidation(T value, ViolationContext context) throws UnexpectedTypeException;
     Class<T> supportType();
 
     Validator<T> cloneValidator();
