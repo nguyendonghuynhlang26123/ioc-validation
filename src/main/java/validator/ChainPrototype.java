@@ -2,6 +2,7 @@ package validator;
 
 import violation.Violation;
 import utils.exceptions.ValidatorNotFoundException;
+import violation.ViolationContext;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,6 +17,6 @@ public interface ChainPrototype<T> {
     Validator<T> find(Class<Validator<T>> target);
 
     //Business logic method
-    Collection<Violation> processValidation(T value);
+    Collection<Violation> processValidation(T value, ViolationContext context);
     void validateAndThrow(T value);
 }

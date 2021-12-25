@@ -8,7 +8,7 @@ import java.util.Collection;
 public interface Validatable {
     default Collection<Violation> validate(){
         ValidationProvider validationProvider = ValidationProvider.getInstance();
-        var ctx = validationProvider.resolveObject(this);
-        return ctx.validate(this);
+        var holder = validationProvider.resolveObject(this.getClass());
+        return holder.validate(this);
     }
 }

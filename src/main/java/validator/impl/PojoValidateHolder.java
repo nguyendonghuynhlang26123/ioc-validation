@@ -1,17 +1,17 @@
 package validator.impl;
 
+import utils.exceptions.NullValueException;
 import validator.ChainPrototype;
-import validator.Validatable;
 import validator.ValidatorHolder;
 import violation.Violation;
 import handler.ViolationHandler;
+import violation.ViolationContext;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
 public class PojoValidateHolder<T> extends ValidatorHolder<T> {
-
-    private Map<String, ChainPrototype> chains;
+    private Map<String, ChainPrototype> chains; //Classname -> ViolationChain
 
     public PojoValidateHolder(){
         chains = new HashMap<>();
@@ -28,28 +28,35 @@ public class PojoValidateHolder<T> extends ValidatorHolder<T> {
 
     @Override
     public Collection<Violation> validate(T value){
-        var values = processValue(value);
+        if (value == null) throw new NullValueException("Cannot validate null value");
+        var fieldMap = getAllFields(value);
         List<Violation> violations = new LinkedList<>();
+
         chains.entrySet().stream().map(e->{
-           Collection<Violation> result = e.getValue().processValidation(values.get(e.getKey()));
-           result.forEach(violation -> violation.setField(e.getKey()));
-           return result;
+            try {
+                ChainPrototype chain = e.getValue();
+                String fieldName = e.getKey();
+                Object fieldValue = fieldMap.get(fieldName).get(value);
+                ViolationContext context = new ViolationContext().root(value).field(fieldMap.get(fieldName));
+
+                return chain.processValidation(fieldValue, context);
+            } catch (IllegalAccessException ex) {
+                ex.printStackTrace();
+            }
+
+           return Collections.EMPTY_LIST;
         }).forEach(violations::addAll);
         violations.forEach(handler::notify);
         return violations;
     }
 
-    private Map<String, Object> processValue(T value){
-        Map<String, Object> values = new HashMap<>();
+    private Map<String, Field> getAllFields(T value){
+        Map<String, Field> values = new HashMap<>();
         for (Field field : value.getClass().getDeclaredFields()) {
             if (!field.trySetAccessible()) {
                 continue;
             }
-            try{
-                values.put(field.getName(), field.get(value));
-            } catch (IllegalAccessException e){
-                System.out.println("Illegal access in pojo holder");
-            }
+            values.put(field.getName(), field);
         }
         return values;
     }

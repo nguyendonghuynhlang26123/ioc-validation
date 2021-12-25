@@ -6,6 +6,7 @@ import utils.exceptions.ValidatorNotFoundException;
 import utils.exceptions.ValidationException;
 import validator.ChainPrototype;
 import validator.Validator;
+import violation.ViolationContext;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -15,11 +16,10 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     private Validator<T> tail;
 
     @Override
-    public Collection<Violation> processValidation(T value) throws ValidationException {
+    public Collection<Violation> processValidation(T value, ViolationContext context) throws ValidationException {
         if (head == null) return null;
-        Collection<Violation> violations = new LinkedList<>();
-        head.processValidation(value, violations);
-        return violations;
+        head.processValidation(value, context);
+        return context.getViolations();
     }
 
     @Override

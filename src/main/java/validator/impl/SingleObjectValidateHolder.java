@@ -6,6 +6,7 @@ import validator.Validatable;
 import validator.Validator;
 import validator.ValidatorHolder;
 import violation.Violation;
+import violation.ViolationContext;
 
 import java.util.Collection;
 
@@ -32,7 +33,7 @@ public class SingleObjectValidateHolder<T> extends ValidatorHolder<T> {
 
     @Override
     public Collection<Violation> validate(T value) {
-        Collection<Violation> result = chainPrototype.processValidation(value);
+        Collection<Violation> result = chainPrototype.processValidation(value, new ViolationContext().root(value));
         result.forEach(violation -> handler.notify(violation));
         return result;
     }
