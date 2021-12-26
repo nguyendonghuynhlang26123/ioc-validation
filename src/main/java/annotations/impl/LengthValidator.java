@@ -2,7 +2,7 @@ package annotations.impl;
 
 import annotations.Length;
 import validator.Validator;
-import validator.BaseValidator;
+import validator.impl.BaseValidator;
 
 public class LengthValidator extends BaseValidator<Length,String> {
     int min;
