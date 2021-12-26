@@ -12,7 +12,7 @@ public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
 
     @Override
     public boolean isValid(String value) {
-        return !value.isEmpty();
+        return value==null || !value.isEmpty();
     }
 
     @Override

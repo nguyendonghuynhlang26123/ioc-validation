@@ -4,21 +4,21 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 public class Violation {
-    Object object;
+    Class<?> validateClass;
     String message;
     Class<? extends Annotation> constraintClass;
     Class<?> rootClass;
     Field field;
 
-    public Violation(Object object, String message, Class<? extends Annotation> constraint) {
-        this.object = object;
-        this.rootClass = object.getClass();
+    public Violation(Class<?> validateClass, String message, Class<? extends Annotation> constraint) {
+        this.validateClass = validateClass;
+        this.rootClass = validateClass;
         this.message = message;
         this.constraintClass = constraint;
     }
 
-    public Violation(Object object, String message, Class<? extends Annotation> constraint, Class<?> rootClass) {
-        this.object = object;
+    public Violation(Class<?> validateClass, String message, Class<? extends Annotation> constraint, Class<?> rootClass) {
+        this.validateClass = validateClass;
         this.message = message;
         this.constraintClass = constraint;
         this.rootClass = rootClass;
@@ -27,20 +27,20 @@ public class Violation {
     @Override
     public String toString() {
         return "Violation{" +
-                "value='" + object + "'" +
+                "class='" + validateClass.getName() + "'" +
                 ", message='" + message + "'" +
                 ", constraint='" + constraintClass.getSimpleName() + "'" +
-                ", class='" + rootClass.getName() + "'" +
+                ", root='" + rootClass.getName() + "'" +
                 ( field != null ? (", field='" + field.getName() + "'") : "") +
                 '}';
     }
 
-    public Object getObject() {
-        return object;
+    public Class<?> getValidateClass() {
+        return validateClass;
     }
 
-    public void setObject(Object object) {
-        this.object = object;
+    public void setValidateClass(Class<?> validateClass) {
+        this.validateClass = validateClass;
     }
 
     public String getMessage() {

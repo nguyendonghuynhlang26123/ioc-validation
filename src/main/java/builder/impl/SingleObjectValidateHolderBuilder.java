@@ -7,17 +7,21 @@ import handler.ViolationHandler;
 import validator.ChainPrototype;
 import validator.Validator;
 import validator.ValidatorHolder;
-import validator.impl.SingleObjectValidateHolder;
+import validator.impl.BaseValidatorHolder;
+import validator.impl.ValidatorChain;
 
 public class SingleObjectValidateHolderBuilder<T> implements ValidateHolderBuilder<T> {
-    SingleObjectValidateHolder<T> validateHolder;
+    BaseValidatorHolder<T> validateHolder;
+    ValidatorChain currentChain;
 
     public SingleObjectValidateHolderBuilder(ViolationHandler handler) {
-        validateHolder = new SingleObjectValidateHolder<>(handler);
+        validateHolder = new BaseValidatorHolder<>(handler);
+        currentChain = new ValidatorChain();
     }
 
     @Override
     public ValidatorHolder<T> buildValidatable(){
+        validateHolder.setChain(currentChain);
         return validateHolder;
     }
 
@@ -26,7 +30,7 @@ public class SingleObjectValidateHolderBuilder<T> implements ValidateHolderBuild
     }
 
     protected void addToChain(Validator validator){
-        validateHolder.addValidator(validator);
+        currentChain.append(validator);
     }
 
     // Others

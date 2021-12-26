@@ -28,8 +28,9 @@ public class ViolationContext {
         return violations;
     }
 
-    public ViolationContext addViolation(String message, Object validatingValue, Class<? extends Annotation> constraintClass){
-        Violation violation = new Violation(validatingValue, message, constraintClass);
+    public ViolationContext addViolation(String message,Class<?> validatingClass,
+                                         Class<? extends Annotation> constraintClass){
+        Violation violation = new Violation(validatingClass, message, constraintClass);
         if (rootObject != null) violation.setRootClass(rootObject.getClass());
         if (field != null) violation.setField(field);
         violations.add(violation);

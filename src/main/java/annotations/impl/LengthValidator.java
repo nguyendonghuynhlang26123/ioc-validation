@@ -29,7 +29,7 @@ public class LengthValidator extends BaseValidator<Length,String> {
 
     @Override
     public boolean isValid(String value) {
-        return value.length() >= min && value.length() <= max;
+        return value==null || (value.length() >= min && value.length() <= max);
     }
 
     @Override
