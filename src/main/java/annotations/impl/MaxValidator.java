@@ -21,7 +21,7 @@ public class MaxValidator extends BaseValidator<Max, Number> {
 
     @Override
     public boolean isValid(Number value) {
-        return value.doubleValue() <= this.max;
+        return value==null || value.doubleValue() <= this.max;
     }
 
     @Override

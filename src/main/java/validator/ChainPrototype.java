@@ -1,5 +1,6 @@
 package validator;
 
+import validator.impl.ValidateObject;
 import violation.Violation;
 import utils.exceptions.ValidatorNotFoundException;
 import violation.ViolationContext;
@@ -12,11 +13,11 @@ public interface ChainPrototype<T> {
     ChainPrototype<T> cloneChain();
 
     //Chain methods
-    ChainPrototype<T> insert(Validator<T> validator);
-    ChainPrototype<T> append(Validator<T> validator);
-    Validator<T> find(Class<Validator<T>> target);
+//    ChainPrototype<T> insert(Validator<T> validator);
+//    ChainPrototype<T> append(Validator<T> validator);
+//    Validator<T> find(Class<Validator<T>> target);
 
     //Business logic method
-    Collection<Violation> processValidation(T value, ViolationContext context);
+    void processValidation(ValidateObject<T> value, ViolationContext context);
     void validateAndThrow(T value);
 }

@@ -20,6 +20,8 @@ public class ChainRegistry {
         cache.put(key, chain);
     }
 
+    public boolean hasChain(String key){return cache.containsKey(key);}
+
     public ChainPrototype getChain(String key){
         if(cache.containsKey(key)){
             return cache.get(key).cloneChain();

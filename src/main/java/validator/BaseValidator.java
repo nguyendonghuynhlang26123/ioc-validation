@@ -1,6 +1,7 @@
 package validator;
 
 import utils.exceptions.ConstraintDeclareException;
+import validator.impl.ValidateObject;
 import violation.Violation;
 import utils.exceptions.UnexpectedTypeException;
 import violation.ViolationContext;
@@ -45,17 +46,16 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
     }
 
     @Override
-    public final void processValidation(T value, ViolationContext context) throws UnexpectedTypeException {
+    public final void processValidation(ValidateObject<T> object, ViolationContext context) throws UnexpectedTypeException {
         Class<?> myType = supportType();
-        Class<?> valueType = value.getClass();
-        if (!myType.isAssignableFrom(valueType)){
+        if (!myType.isAssignableFrom(object.getType())){
             throw new UnexpectedTypeException(this.getClass().getSimpleName()+" invalid type access");
         }
-        if (!this.isValid(value)){
-            context.addViolation(getMessage(), value, annotationClass);
+        if (!this.isValid(object.getValue())){
+            context.addViolation(getMessage(), object.getType(), annotationClass);
         }
         if( next != null){
-            next.processValidation(value, context);
+            next.processValidation(object, context);
         }
     }
 

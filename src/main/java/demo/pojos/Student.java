@@ -14,7 +14,7 @@ public class Student implements Validatable {
     String email;
 
     @Max(value = 18, message = "Age must < 18")
-    long age;
+    Integer age;
 
     public Student(String name, String email, int age) {
         this.name = name;

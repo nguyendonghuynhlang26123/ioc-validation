@@ -25,12 +25,10 @@ import java.util.*;
 public class ValidationProvider {
     private static final ValidationProvider INSTANCE = new ValidationProvider();
     private final ViolationHandler violationHandler;
-    private final Map<Class, ValidatorHolder> holderRegistry;
 
     // NOTE: SINGLETON PATTERN
     private ValidationProvider() {
         violationHandler = new ViolationHandler();
-        holderRegistry = new HashMap<>();
     }
 
     public static ValidationProvider getInstance() {
@@ -38,17 +36,17 @@ public class ValidationProvider {
     }
 
     //Read each fields of the object
-    public  ValidatorHolder resolveObject(Class<?> objectClass) throws ValidationException {
+    private ChainPrototype resolveObject(Class<?> objectClass) throws ValidationException {
 
-        // Search for stored validator holders
-        if (holderRegistry.containsKey(objectClass)){
-            return holderRegistry.get(objectClass);
+//         Search for stored validator chain
+        if (ChainRegistry.getInstance().hasChain(objectClass.getSimpleName())){
+            return ChainRegistry.getInstance().getChain(objectClass.getSimpleName());
         }
 
         Field[] fields;
         Annotation[] annotations;
 
-        Map<String, ChainPrototype> chainMap = new HashMap<>();
+        CompositeValidatorChain chain = new CompositeValidatorChain<>();
 
         fields = objectClass.getDeclaredFields();
         // For each field in class
@@ -61,62 +59,64 @@ public class ValidationProvider {
 
             annotations = field.getDeclaredAnnotations();
 
-            // Get chain from store
-            String chainKey = objectClass.getSimpleName()+"."+field.getName();
-            var validatorChain = ChainRegistry.getInstance().getChain(chainKey);
+            ValidatorChain singleChain = new ValidatorChain();
+            // For each field's annotation
+            for (Annotation annotation : annotations) {
+                //DO some sanity check:
 
-            // No prototype found
-            if (validatorChain == null){
-                // Create new chain
-                validatorChain = new ValidatorChain();
-                // For each field's annotation
-                for (Annotation annotation : annotations) {
-                    //DO some sanity check:
-
-                    //check if @ValidatedBy is implemented
-                    ValidatedBy validateBy = annotation.annotationType().getDeclaredAnnotation(ValidatedBy.class);
-                    if (validateBy == null) {
-                        // No Validator Class is assigned.
-                        System.err.println("Warning! Not found validatedBy for annotation @" + annotation.annotationType());
-                        throw new ValidatorNotFoundException("Not found validatedBy for annotation @" + annotation.annotationType());
-                    }
-
-                    // Retrieve the @ValidatedBy Class
-                    Class<? extends Validator<?>> validatorImpl = validateBy.clazz();
-
-                    //Check if this class has "EMPTY" constructor. Since
-                    if (!hasParameterlessPublicConstructor(validatorImpl)) {
-                        // No Validator Class is assigned.
-                        System.err.println("Warnning! @" + annotation.annotationType() + " should implement Empty constructor for Provider to resolve");
-                        throw new ValidatorDeclarationException(" @" + annotation.annotationType() + " should implement Empty constructor for Provider to resolve");
-                    }
-
-                    try {
-                        Validator validator = validatorImpl.getDeclaredConstructor().newInstance();
-
-                        //Call init
-                        Method initMethod = validatorImpl.getMethod("initialize", Annotation.class);
-                        initMethod.setAccessible(true);
-                        initMethod.invoke(validator, annotation);
-
-                        //Add to chain
-                        validatorChain.append(validator);
-
-                    } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
-                        System.err.println("Warning! Unexpected error found at " + annotation.annotationType());
-                        throw new ProviderResolveException("Unexpected error found at " + annotation.annotationType(), e);
-                    }
+                //check if @ValidatedBy is implemented
+                ValidatedBy validateBy = annotation.annotationType().getDeclaredAnnotation(ValidatedBy.class);
+                if (validateBy == null) {
+                    // No Validator Class is assigned.
+                    System.err.println("Warning! Not found validatedBy for annotation @" + annotation.annotationType());
+                    throw new ValidatorNotFoundException("Not found validatedBy for annotation @" + annotation.annotationType());
                 }
-                // Register chain
-                ChainRegistry.getInstance().register(chainKey, validatorChain);
+
+                // Retrieve the @ValidatedBy Class
+                Class<? extends Validator<?>> validatorImpl = validateBy.clazz();
+
+                //Check if this class has "EMPTY" constructor. Since
+                if (!hasParameterlessPublicConstructor(validatorImpl)) {
+                    // No Validator Class is assigned.
+                    System.err.println("Warnning! @" + annotation.annotationType() + " should implement Empty constructor for Provider to resolve");
+                    throw new ValidatorDeclarationException(" @" + annotation.annotationType() + " should implement Empty constructor for Provider to resolve");
+                }
+
+                try {
+                    Validator validator = validatorImpl.getDeclaredConstructor().newInstance();
+
+                    //Call init
+                    Method initMethod = validatorImpl.getMethod("initialize", Annotation.class);
+                    initMethod.setAccessible(true);
+                    initMethod.invoke(validator, annotation);
+
+                    //Add to chain
+                    singleChain.append(validator);
+
+                } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
+                    System.err.println("Warning! Unexpected error found at " + annotation.annotationType());
+                    throw new ProviderResolveException("Unexpected error found at " + annotation.annotationType(), e);
+                }
             }
+            chain.addChain(field.getName(), singleChain);
 
-            chainMap.put(field.getName(), validatorChain);
+            // check for validatable field
+            if(Validatable.class.isAssignableFrom(field.getType())){
+                var nestedChain = resolveObject(field.getType());
+                chain.addChain(field.getName(), nestedChain);
+            }
         }
+        //Register chain
+        ChainRegistry.getInstance().register(objectClass.getSimpleName(), chain);
+        return chain;
+    }
 
-        ValidatorHolder<?> holder = new PojoValidateHolder<>(violationHandler, chainMap);
-        holderRegistry.put(objectClass, holder);
-        return holder;
+    public ValidatorHolder wrapChain(Class<?> objectClass){
+        var chain = resolveObject(objectClass);
+        if (chain==null){
+            throw new ValidationException("Cannot construct chain");
+        }
+        return new BaseValidatorHolder<>(chain, violationHandler);
     }
 
     private boolean hasParameterlessPublicConstructor(Class<?> clazz) {
@@ -134,7 +134,7 @@ public class ValidationProvider {
 
     public void removeViolationListener(ViolationListener listener){violationHandler.unsubscribe(listener);}
 
-    public <T> ValidateHolderBuilder<T> createSingleValidatorBuilder(){
+    public <T> ValidateHolderBuilder<T> createValidatorBuilder(){
         return new SingleObjectValidateHolderBuilder<T>(violationHandler);
     }
 }

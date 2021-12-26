@@ -16,10 +16,10 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     private Validator<T> tail;
 
     @Override
-    public Collection<Violation> processValidation(T value, ViolationContext context) throws ValidationException {
-        if (head == null) return null;
+    public void processValidation(ValidateObject<T> value, ViolationContext context) throws ValidationException {
+        if (head == null) return;
         head.processValidation(value, context);
-        return context.getViolations();
+//        return context.getViolations();
     }
 
     @Override
@@ -41,11 +41,13 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
             }
             if(source.tail != source.head){
                 tail = newChainTemp.setNext(source.tail.cloneValidator());
+            } else {
+                tail = head;
             }
         }
     }
 
-    @Override
+//    @Override
     public Validator<T> find(Class<Validator<T>> target) {
         var temp = head;
         while (temp != null){
@@ -58,7 +60,7 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     }
 
     // add from top
-    @Override
+//    @Override
     public ValidatorChain<T> insert(Validator<T> add){
         if (head != null) {
             add.setNext(head);
@@ -70,7 +72,7 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     }
 
     // add from bottom
-    @Override
+//    @Override
     public ValidatorChain<T> append(Validator<T> validator){
         if (tail != null){
             tail.setNext(validator);
@@ -79,17 +81,6 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
         }
         tail = validator;
         return this;
-    }
-
-    // Halted
-    public void addBefore(Validator<T> add, Class<Validator<T>> target){
-        try{
-            var targetValidator = find(target);
-            add.setNext(targetValidator);
-            // TODO: Get previous
-        } catch (ValidatorNotFoundException e){
-            // do something
-        }
     }
 
     @Override
