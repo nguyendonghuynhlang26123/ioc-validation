@@ -1,8 +1,7 @@
-package validator;
+package validator.impl;
 
 import utils.exceptions.ConstraintDeclareException;
-import validator.impl.ValidateObject;
-import violation.Violation;
+import validator.Validator;
 import utils.exceptions.UnexpectedTypeException;
 import violation.ViolationContext;
 
@@ -10,7 +9,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.util.Collection;
 
 public abstract class BaseValidator<Ctx extends Annotation,T> implements Validator<T> {
     private Validator<T> next;
@@ -48,6 +46,7 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
     @Override
     public final void processValidation(ValidateObject<T> object, ViolationContext context) throws UnexpectedTypeException {
         Class<?> myType = supportType();
+
         if (!myType.isAssignableFrom(object.getType())){
             throw new UnexpectedTypeException(this.getClass().getSimpleName()+" invalid type access");
         }

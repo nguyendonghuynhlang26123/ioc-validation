@@ -1,6 +1,6 @@
 package demo.customized;
 
-import validator.BaseValidator;
+import validator.impl.BaseValidator;
 import validator.Validator;
 
 import java.util.Collection;

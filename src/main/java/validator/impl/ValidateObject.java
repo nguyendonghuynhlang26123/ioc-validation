@@ -1,10 +1,12 @@
 package validator.impl;
 
+import utils.Helper;
+
 public class ValidateObject<T> {
     Class<T> type;
     T value;
     public ValidateObject(Class<T> type, T value){
-        this.type = type;
+        this.type = Helper.wrapTypeIfPrimitive(type);
         this.value = value;
     }
 

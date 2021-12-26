@@ -1,7 +1,7 @@
 package annotations.impl;
 
 import annotations.NotNull;
-import validator.BaseValidator;
+import validator.impl.BaseValidator;
 import validator.Validator;
 
 public class NotNullValidator extends BaseValidator<NotNull, Object> {

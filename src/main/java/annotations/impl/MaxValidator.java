@@ -2,7 +2,7 @@ package annotations.impl;
 
 import annotations.Max;
 import validator.Validator;
-import validator.BaseValidator;
+import validator.impl.BaseValidator;
 
 public class MaxValidator extends BaseValidator<Max, Number> {
     long max;
