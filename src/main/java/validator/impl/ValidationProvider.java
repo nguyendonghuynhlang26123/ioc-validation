@@ -137,6 +137,10 @@ public class ValidationProvider {
         violationHandler.subscribe(listener);
     }
 
+    public ViolationHandler getHandler(){
+        return violationHandler;
+    }
+
     public void removeViolationListener(ViolationListener listener){violationHandler.unsubscribe(listener);}
 
     public <T> ValidateHolderBuilder<T> createValidatorBuilder(){

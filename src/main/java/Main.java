@@ -1,4 +1,3 @@
-import demo.pojos.Data;
 import demo.pojos.Nested;
 import demo.pojos.NoAnnoStudent;
 import demo.pojos.Student;
@@ -7,10 +6,6 @@ import utils.exceptions.ChainBuilderException;
 import utils.exceptions.ValidationException;
 import validator.ValidatorHolder;
 import validator.impl.ValidationProvider;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 public class Main {
     public static void main(String[] args) {
@@ -60,7 +55,7 @@ public class Main {
     public static void demo(String input){
         try{
             ValidatorHolder<String> validatable = ValidationProvider.getInstance().<String>createValidatorBuilder()
-                    .startSingleChain()
+                    .applyConstraint()
                     .length(6)
                     .buildValidatable();
             validatable.validate(input);
@@ -73,10 +68,11 @@ public class Main {
     public static void compositeBuilder(NoAnnoStudent object){
         try{
             ValidatorHolder<NoAnnoStudent> holder = ValidationProvider.getInstance().<NoAnnoStudent>createValidatorBuilder()
-                    .startCompositeChain()
-                    .startSingleChain("name").notEmpty()
-                    .startSingleChain("email").notEmpty().length(4)
-                    .startSingleChain("age").max(18)
+                    .handler(ValidationProvider.getInstance().getHandler())
+                    .applyComplexConstraints()
+                        .applyConstraint("name").notEmpty()
+                        .applyConstraint("email").notEmpty().length(4)
+                        .applyConstraint("age").max(18)
                     .buildValidatable();
             holder.validate(object);
         } catch (ValidationException| ChainBuilderException e){
