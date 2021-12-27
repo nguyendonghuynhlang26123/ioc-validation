@@ -21,29 +21,28 @@ public class Main {
         /// POJO classes
         ValidationProvider validationProvider = ValidationProvider.getInstance();
         validationProvider.registerViolationListener(new LoggingViolation());
-        s1.validate();
-        System.out.println("-----");
-        s2.validate();
-        System.out.println("-----");
-        s3.validate();
-        System.out.println("-----");
-        nested.validate();
-        System.out.println("-----");
-        nested.setStudent(s2);
-        nested.validate();
-        System.out.println("-----");
+//        s1.validate();
+//        System.out.println("-----");
+//        s2.validate();
+//        System.out.println("-----");
+//        s3.validate();
+//        System.out.println("-----");
+//        nested.validate();
+//        System.out.println("-----");
+//        nested.setStudent(s2);
+//        nested.validate();
+//        System.out.println("-----");
 
         /// Primitive variables
-        String testString1 = "";
-        String testString2 = "dac";
-        String testString3 = "dagdsacdafa";
-
-        demo(testString1);
-        System.out.println("-----");
-        demo(testString2);
-        System.out.println("-----");
-        demo(testString3);
-        System.out.println("-----");
+//        String testString1 = "";
+//        String testString2 = "dac";
+//        String testString3 = "dagdsacdafa";
+//        demo(testString1);
+//        System.out.println("-----");
+//        demo(testString2);
+//        System.out.println("-----");
+//        demo(testString3);
+//        System.out.println("-----");
 
         /// Customized
         Data data = new Data();
@@ -52,7 +51,7 @@ public class Main {
         data.setStudents(Arrays.asList(s1, s2, s3));
         data.validate();
 
-        compositeBuilder(noAnnoStudent);
+//        compositeBuilder(noAnnoStudent);
     }
 
     public static void demo(String input){

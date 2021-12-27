@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class Data implements Validatable {
-    @ArrayNotEmpty(message = "StudentData should not be empty")
+//    @ArrayNotEmpty(message = "StudentData should not be empty")
     Collection<Student> students = new ArrayList<>();
 
     public Collection<Student> getStudents() {
