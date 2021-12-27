@@ -8,18 +8,11 @@ public class NotNullValidator extends BaseValidator<NotNull, Object> {
     public NotNullValidator(){}
 
     @Override
-    public void onInit(NotNull notNull) {
-
-    }
+    public void onInit(NotNull notNull) {}
 
     @Override
     public boolean isValid(Object value) {
         return value!=null;
-    }
-
-    @Override
-    public Class<Object> supportType() {
-        return Object.class;
     }
 
     @Override

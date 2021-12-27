@@ -1,3 +1,4 @@
+import demo.pojos.Data;
 import demo.pojos.Nested;
 import demo.pojos.NoAnnoStudent;
 import demo.pojos.Student;
@@ -6,6 +7,8 @@ import utils.exceptions.ChainBuilderException;
 import utils.exceptions.ValidationException;
 import validator.ValidatorHolder;
 import validator.impl.ValidationProvider;
+
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
@@ -18,36 +21,36 @@ public class Main {
         /// POJO classes
         ValidationProvider validationProvider = ValidationProvider.getInstance();
         validationProvider.registerViolationListener(new LoggingViolation());
-//        s1.validate();
-//        System.out.println("-----");
-//        s2.validate();
-//        System.out.println("-----");
-//        s3.validate();
-//        System.out.println("-----");
-//        nested.validate();
-//        System.out.println("-----");
-//        nested.setStudent(s2);
-//        nested.validate();
-//        System.out.println("-----");
+        s1.validate();
+        System.out.println("-----");
+        s2.validate();
+        System.out.println("-----");
+        s3.validate();
+        System.out.println("-----");
+        nested.validate();
+        System.out.println("-----");
+        nested.setStudent(s2);
+        nested.validate();
+        System.out.println("-----");
 
         /// Primitive variables
-//        String testString1 = "";
-//        String testString2 = "dac";
+        String testString1 = "";
+        String testString2 = "dac";
         String testString3 = "dagdsacdafa";
-//
-//        demo(testString1);
-//        System.out.println("-----");
-//        demo(testString2);
-//        System.out.println("-----");
+
+        demo(testString1);
+        System.out.println("-----");
+        demo(testString2);
+        System.out.println("-----");
         demo(testString3);
         System.out.println("-----");
 
         /// Customized
-//        Data data = new Data();
-//        data.validate();
-//        System.out.println("-----");
-//        data.setStudents(Arrays.asList(s1, s2, s3));
-//        data.validate();
+        Data data = new Data();
+        data.validate();
+        System.out.println("-----");
+        data.setStudents(Arrays.asList(s1, s2, s3));
+        data.validate();
 
         compositeBuilder(noAnnoStudent);
     }

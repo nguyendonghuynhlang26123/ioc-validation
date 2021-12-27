@@ -23,6 +23,7 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
     }
 
     public BaseValidator(){
+        //can only used in CLASS implements / extends something that has generic declarations
         this.annotationClass = (Class<Ctx>) ((ParameterizedType) getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0];
         this.ctx = null;
@@ -30,6 +31,7 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
 
     public BaseValidator(BaseValidator<Ctx, T> other){
         this.annotationClass = other.annotationClass;
+        this.ctx = other.ctx;
     }
 
     @Override
@@ -45,8 +47,7 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
 
     @Override
     public final void processValidation(ValidateObject<T> object, ViolationContext context) throws UnexpectedTypeException {
-        Class<?> myType = supportType();
-        if (!myType.isAssignableFrom(object.getType())){
+        if (!isValidType(object.getType())){
             throw new UnexpectedTypeException(this.getClass().getSimpleName()+" invalid type access");
         }
         if (!this.isValid(object.getValue())){
@@ -73,5 +74,14 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
             e.printStackTrace();
             throw new ConstraintDeclareException("Failed to execute message() fn! Please make sure you set default value for it");
         }
+    }
+
+    @Override
+    public boolean isValidType(Class<T> clazz) {
+        //can only used in CLASS implements / extends something that has generic declarations
+        Class<?> myType = (Class<T>) ((ParameterizedType) getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[1];
+
+        return myType.isAssignableFrom(clazz);
     }
 }

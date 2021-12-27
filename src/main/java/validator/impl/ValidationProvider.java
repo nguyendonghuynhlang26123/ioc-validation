@@ -15,10 +15,7 @@ import handler.ViolationHandler;
 import validator.ValidatorHolder;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 //Singleton
 public class ValidationProvider {
@@ -76,9 +73,15 @@ public class ValidationProvider {
 
                 //Check if this class has "EMPTY" constructor. Since
                 if (!hasParameterlessPublicConstructor(validatorImpl)) {
-                    // No Validator Class is assigned.
-                    System.err.println("Warnning! @" + annotation.annotationType() + " should implement Empty constructor for Provider to resolve");
-                    throw new ValidatorDeclarationException(" @" + annotation.annotationType() + " should implement Empty constructor for Provider to resolve");
+                    throw new ValidatorDeclarationException(
+                            validatorImpl.getName() + " must implement " + validatorImpl.getName() + "(){...} constructor");
+                }
+
+                //Check if this class has 2 generic type Ctx and T (i.e: class X extends BaseValidator<Annotation, String>)
+                if (!hasSpecified2GenericType(validatorImpl)) {
+                    throw new ValidatorDeclarationException(
+                            validatorImpl.getName() + " must specify all generic types " +
+                                    "(I.e: class " + validatorImpl.getName() + " extends BaseValidator<Annotation, String> {...} ");
                 }
 
                 try {
@@ -131,6 +134,11 @@ public class ValidationProvider {
             }
         }
         return false;
+    }
+
+    private boolean hasSpecified2GenericType(Class<?> clazz) {
+        return ((ParameterizedType) clazz
+                .getGenericSuperclass()).getActualTypeArguments().length == 2;
     }
 
     public void registerViolationListener(ViolationListener listener){
