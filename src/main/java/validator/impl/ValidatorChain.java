@@ -19,7 +19,6 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     public void processValidation(ValidateObject<T> value, ViolationContext context) throws ValidationException {
         if (head == null) return;
         head.processValidation(value, context);
-//        return context.getViolations();
     }
 
     @Override
@@ -60,7 +59,7 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     }
 
     // add from top
-//    @Override
+    @Override
     public ValidatorChain<T> insert(Validator<T> add){
         if (head != null) {
             add.setNext(head);
@@ -72,8 +71,8 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     }
 
     // add from bottom
-//    @Override
-    public ValidatorChain<T> append(Validator<T> validator){
+    @Override
+    public ValidatorChain<T> appendValidator(Validator<T> validator){
         if (tail != null){
             tail.setNext(validator);
         } else {

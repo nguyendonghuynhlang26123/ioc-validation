@@ -13,8 +13,17 @@ public interface ChainPrototype<T> {
     ChainPrototype<T> cloneChain();
 
     //Chain methods
-//    ChainPrototype<T> insert(Validator<T> validator);
-//    ChainPrototype<T> append(Validator<T> validator);
+    default ChainPrototype<T> insert(Validator<T> validator) throws NoSuchMethodException {
+        throw new NoSuchMethodException("Add validator on composite chain not available");
+    }
+
+    default ChainPrototype<T> appendValidator(Validator<T> validator) throws NoSuchMethodException {
+        throw new NoSuchMethodException("Add validator on composite chain not available");
+    }
+
+    default ChainPrototype<T> addChain(String key, ChainPrototype<T> chain) throws NoSuchMethodException {
+        throw new NoSuchMethodException("Add chain on single chain not available");
+    }
 //    Validator<T> find(Class<Validator<T>> target);
 
     //Business logic method

@@ -46,7 +46,6 @@ public abstract class BaseValidator<Ctx extends Annotation,T> implements Validat
     @Override
     public final void processValidation(ValidateObject<T> object, ViolationContext context) throws UnexpectedTypeException {
         Class<?> myType = supportType();
-
         if (!myType.isAssignableFrom(object.getType())){
             throw new UnexpectedTypeException(this.getClass().getSimpleName()+" invalid type access");
         }

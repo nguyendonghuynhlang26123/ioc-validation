@@ -27,8 +27,10 @@ public class CompositeValidatorChain<T> implements ChainPrototype<T> {
         this.chains = chains;
     }
 
-    public void addChain(String key, ChainPrototype chain){
+    @Override
+    public ChainPrototype<T> addChain(String key, ChainPrototype chain){
         chains.computeIfAbsent(key, k->new LinkedList<>()).add(chain);
+        return this;
     }
 
     @Override
@@ -46,7 +48,6 @@ public class CompositeValidatorChain<T> implements ChainPrototype<T> {
                 chains.forEach(chain->chain.processValidation(fieldMap.get(key), context));
             }
         });
-//        return context.getViolations();
     }
 
     @Override

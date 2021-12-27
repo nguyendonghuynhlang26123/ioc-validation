@@ -2,7 +2,7 @@ package validator.impl;
 
 import annotations.ValidatedBy;
 import builder.ValidateHolderBuilder;
-import builder.impl.SingleObjectValidateHolderBuilder;
+import builder.impl.BaseValidateHolderBuilder;
 import handler.ViolationListener;
 import utils.exceptions.ValidatorDeclarationException;
 import utils.exceptions.ProviderResolveException;
@@ -19,7 +19,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
 
 //Singleton
 public class ValidationProvider {
@@ -46,7 +45,7 @@ public class ValidationProvider {
         Field[] fields;
         Annotation[] annotations;
 
-        CompositeValidatorChain chain = new CompositeValidatorChain<>();
+        ChainPrototype chain = new CompositeValidatorChain<>();
 
         fields = objectClass.getDeclaredFields();
         // For each field in class
@@ -59,7 +58,7 @@ public class ValidationProvider {
 
             annotations = field.getDeclaredAnnotations();
 
-            ValidatorChain singleChain = new ValidatorChain();
+            ChainPrototype singleChain = new ValidatorChain();
             // For each field's annotation
             for (Annotation annotation : annotations) {
                 //DO some sanity check:
@@ -91,19 +90,25 @@ public class ValidationProvider {
                     initMethod.invoke(validator, annotation);
 
                     //Add to chain
-                    singleChain.append(validator);
+                    singleChain.appendValidator(validator);
 
                 } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
                     System.err.println("Warning! Unexpected error found at " + annotation.annotationType());
                     throw new ProviderResolveException("Unexpected error found at " + annotation.annotationType(), e);
                 }
             }
-            chain.addChain(field.getName(), singleChain);
 
-            // check for validatable field
-            if(Validatable.class.isAssignableFrom(field.getType())){
-                var nestedChain = resolveObject(field.getType());
-                chain.addChain(field.getName(), nestedChain);
+            try {
+                chain.addChain(field.getName(), singleChain);
+
+                // check for validatable field
+                if(Validatable.class.isAssignableFrom(field.getType())){
+                    var nestedChain = resolveObject(field.getType());
+                    chain.addChain(field.getName(), nestedChain);
+                }
+            } catch (NoSuchMethodException e) {
+                System.err.println("Warning! Unexpected error found at " + objectClass.getName());
+                throw new ProviderResolveException("Invalid chain type usage at " + objectClass.getName(), e);
             }
         }
         //Register chain
@@ -135,6 +140,6 @@ public class ValidationProvider {
     public void removeViolationListener(ViolationListener listener){violationHandler.unsubscribe(listener);}
 
     public <T> ValidateHolderBuilder<T> createValidatorBuilder(){
-        return new SingleObjectValidateHolderBuilder<T>(violationHandler);
+        return new BaseValidateHolderBuilder<T>(violationHandler);
     }
 }
