@@ -32,10 +32,6 @@ public class LengthValidator extends BaseValidator<Length,String> {
         return value==null || (value.length() >= min && value.length() <= max);
     }
 
-    @Override
-    public Class<String> supportType() {
-        return String.class;
-    }
 
     @Override
     public Validator<String> cloneValidator() {

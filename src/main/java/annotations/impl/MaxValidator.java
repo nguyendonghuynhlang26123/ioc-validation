@@ -7,8 +7,7 @@ import validator.impl.BaseValidator;
 public class MaxValidator extends BaseValidator<Max, Number> {
     long max;
 
-    public MaxValidator() {
-    }
+    public MaxValidator() {}
 
     public MaxValidator(long value) {
         this.max = value;
@@ -22,11 +21,6 @@ public class MaxValidator extends BaseValidator<Max, Number> {
     @Override
     public boolean isValid(Number value) {
         return value==null || value.doubleValue() <= this.max;
-    }
-
-    @Override
-    public Class<Number> supportType() {
-        return Number.class;
     }
 
     @Override

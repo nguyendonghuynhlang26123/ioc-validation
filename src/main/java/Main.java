@@ -8,9 +8,7 @@ import utils.exceptions.ValidationException;
 import validator.ValidatorHolder;
 import validator.impl.ValidationProvider;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class Main {
     public static void main(String[] args) {
@@ -38,29 +36,28 @@ public class Main {
         /// Primitive variables
 //        String testString1 = "";
 //        String testString2 = "dac";
-        String testString3 = "dagdsacdafa";
-//
+//        String testString3 = "dagdsacdafa";
 //        demo(testString1);
 //        System.out.println("-----");
 //        demo(testString2);
 //        System.out.println("-----");
-        demo(testString3);
-        System.out.println("-----");
+//        demo(testString3);
+//        System.out.println("-----");
 
         /// Customized
-//        Data data = new Data();
-//        data.validate();
-//        System.out.println("-----");
-//        data.setStudents(Arrays.asList(s1, s2, s3));
-//        data.validate();
+        Data data = new Data();
+        data.validate();
+        System.out.println("-----");
+        data.setStudents(Arrays.asList(s1, s2, s3));
+        data.validate();
 
-        compositeBuilder(noAnnoStudent);
+//        compositeBuilder(noAnnoStudent);
     }
 
     public static void demo(String input){
         try{
             ValidatorHolder<String> validatable = ValidationProvider.getInstance().<String>createValidatorBuilder()
-                    .startSingleChain()
+                    .applyConstraint()
                     .length(6)
                     .buildValidatable();
             validatable.validate(input);
@@ -73,10 +70,11 @@ public class Main {
     public static void compositeBuilder(NoAnnoStudent object){
         try{
             ValidatorHolder<NoAnnoStudent> holder = ValidationProvider.getInstance().<NoAnnoStudent>createValidatorBuilder()
-                    .startCompositeChain()
-                    .startSingleChain("name").notEmpty()
-                    .startSingleChain("email").notEmpty().length(4)
-                    .startSingleChain("age").max(18)
+                    .handler(ValidationProvider.getInstance().getHandler())
+                    .applyComplexConstraints()
+                        .applyConstraint("name").notEmpty()
+                        .applyConstraint("email").notEmpty().length(4)
+                        .applyConstraint("age").max(18)
                     .buildValidatable();
             holder.validate(object);
         } catch (ValidationException| ChainBuilderException e){

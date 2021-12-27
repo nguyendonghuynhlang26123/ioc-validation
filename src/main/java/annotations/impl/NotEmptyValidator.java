@@ -16,11 +16,6 @@ public class NotEmptyValidator extends BaseValidator<NotEmpty, String> {
     }
 
     @Override
-    public Class<String> supportType() {
-        return String.class;
-    }
-
-    @Override
     public Validator<String> cloneValidator() {
         return new NotEmptyValidator(this);
     }

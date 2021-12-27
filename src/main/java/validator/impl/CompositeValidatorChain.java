@@ -43,9 +43,9 @@ public class CompositeValidatorChain<T> implements ChainPrototype<T> {
     @Override
     public void processValidation(ValidateObject<T> value, ViolationContext context) {
         var fieldMap = processValue(value.getValue());
-        chains.forEach((key, chains) -> {
+        chains.forEach((key, chainList) -> {
             if(fieldMap.containsKey(key)){
-                chains.forEach(chain->chain.processValidation(fieldMap.get(key), context));
+                chainList.forEach(chain->chain.processValidation(fieldMap.get(key), context));
             }
         });
     }

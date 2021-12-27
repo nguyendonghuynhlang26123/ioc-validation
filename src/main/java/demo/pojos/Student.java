@@ -9,7 +9,7 @@ public class Student implements Validatable {
     @NotEmpty(message = "Name should not be empty")
     String name;
 
-    @NotEmpty
+    @NotEmpty(message = "Email should not be empty")
     @Length(max = 4, message = "Email length should has less than 4 characters")
     String email;
 

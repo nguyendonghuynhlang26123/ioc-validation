@@ -23,28 +23,28 @@ public class BaseValidateHolderBuilder<T> implements ValidateHolderBuilder<T> {
     }
 
     @Override
-    public ValidateHolderBuilder<T> startSingleChain(){
+    public ValidateHolderBuilder<T> applyConstraint(){
         rootChain = new ValidatorChain();
         currentChain = rootChain;
         return this;
     }
 
     @Override
-    public ValidateHolderBuilder<T> startSingleChain(String key){
+    public ValidateHolderBuilder<T> applyConstraint(String key){
         currentChain = new ValidatorChain();
         addCurrentToCompositeRoot(key);
         return this;
     }
 
     @Override
-    public ValidateHolderBuilder<T> startCompositeChain(){
+    public ValidateHolderBuilder<T> applyComplexConstraints(){
         rootChain = new CompositeValidatorChain();
         currentChain = rootChain;
         return this;
     }
 
     @Override
-    public ValidateHolderBuilder<T> startCompositeChain(String key){
+    public ValidateHolderBuilder<T> applyComplexConstraints(String key){
         currentChain = new CompositeValidatorChain();
         addCurrentToCompositeRoot(key);
         return this;
