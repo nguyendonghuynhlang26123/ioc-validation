@@ -17,7 +17,7 @@ public class CompositeValidatorChain<T> implements ChainPrototype<T> {
      *     private Student student;
      * In which Student implement Validatable
      */
-    private Map<String, Collection<ChainPrototype>> chains;
+    protected Map<String, Collection<ChainPrototype>> chains;
 
     public CompositeValidatorChain(){
         chains = new HashMap<>();

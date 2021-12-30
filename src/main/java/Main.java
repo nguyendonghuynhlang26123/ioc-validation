@@ -57,7 +57,7 @@ public class Main {
     public static void demo(String input){
         try{
             ValidatorHolder<String> validatable = ValidationProvider.getInstance().<String>createValidatorBuilder()
-                    .applyConstraint()
+                     .applyConstraint()
                     .length(6)
                     .buildValidatable();
             validatable.validate(input);
