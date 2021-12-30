@@ -16,6 +16,7 @@ import validator.ValidatorHolder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.util.Collection;
 
 //Singleton
 public class ValidationProvider {
@@ -55,7 +56,15 @@ public class ValidationProvider {
                 chain.addChain(field.getName(), singleChain);
 
                 // If this class can be validated
-                if(Validatable.class.isAssignableFrom(field.getType())){
+                if (Collection.class.isAssignableFrom(field.getType())){
+                    ParameterizedType p = (ParameterizedType) field.getType().getGenericSuperclass();;
+                    Type genericT = p.getActualTypeArguments()[0];
+                    if (Validatable.class.isAssignableFrom(genericT.getClass())){
+                        var nestedChain = resolveObject(genericT.getClass());
+                        //TODO:
+                    }
+                }
+                else if(Validatable.class.isAssignableFrom(field.getType())){
                     var nestedChain = resolveObject(field.getType()); //recursively call to resolve
                     chain.addChain(field.getName(), nestedChain);
                 }
