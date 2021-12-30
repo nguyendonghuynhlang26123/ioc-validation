@@ -1,7 +1,4 @@
-import demo.pojos.Data;
-import demo.pojos.Nested;
-import demo.pojos.NoAnnoStudent;
-import demo.pojos.Student;
+import demo.pojos.*;
 import handler.impl.LoggingViolation;
 import utils.exceptions.ChainBuilderException;
 import utils.exceptions.ValidationException;
@@ -9,6 +6,7 @@ import validator.ValidatorHolder;
 import validator.impl.ValidationProvider;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,6 +15,7 @@ public class Main {
         Student s3 = new Student("test", "test@test", 28);
         NoAnnoStudent noAnnoStudent = new NoAnnoStudent("","",20);
         Nested nested = new Nested();
+        NestCollection nestCollection = new NestCollection();
 
         /// POJO classes
         ValidationProvider validationProvider = ValidationProvider.getInstance();
@@ -31,8 +30,9 @@ public class Main {
 //        System.out.println("-----");
 //        nested.setStudent(s2);
 //        nested.validate();
-//        System.out.println("-----");
-
+        System.out.println("-----");
+        nestCollection.setStudents(List.of(s1, s2, s3));
+        nestCollection.validate();
         /// Primitive variables
 //        String testString1 = "";
 //        String testString2 = "dac";
@@ -45,11 +45,11 @@ public class Main {
 //        System.out.println("-----");
 
         /// Customized
-        Data data = new Data();
-        data.validate();
-        System.out.println("-----");
-        data.setStudents(Arrays.asList(s1, s2, s3));
-        data.validate();
+//        Data data = new Data();
+//        data.validate();
+//        System.out.println("-----");
+//        data.setStudents(Arrays.asList(s1, s2, s3));
+//        data.validate();
 
 //        compositeBuilder(noAnnoStudent);
     }
