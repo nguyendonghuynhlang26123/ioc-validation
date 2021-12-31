@@ -38,7 +38,7 @@ public class ValidationProvider {
 
 
     public ValidatorHolder wrapChain(Class<?> objectClass){
-        var chain = resolver.resolve(objectClass, false);
+        var chain = resolver.resolve(objectClass);
         if (chain==null){
             throw new ValidationException("Cannot construct chain");
         }

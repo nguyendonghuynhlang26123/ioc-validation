@@ -1,12 +1,8 @@
 package validator;
 
-import validator.impl.ValidateObject;
-import violation.Violation;
-import utils.exceptions.ValidatorNotFoundException;
+import utils.AddChainRequest;
+import utils.ValidateObject;
 import violation.ViolationContext;
-
-import java.util.Collection;
-import java.util.List;
 
 public interface ChainPrototype<T> {
     //Clone method
@@ -21,7 +17,7 @@ public interface ChainPrototype<T> {
         throw new NoSuchMethodException("Add validator on composite chain not available");
     }
 
-    default ChainPrototype<T> addChain(String key, ChainPrototype<T> chain) throws NoSuchMethodException {
+    default ChainPrototype<T> addChain(AddChainRequest<T> chainRequest) throws NoSuchMethodException {
         throw new NoSuchMethodException("Add chain on single chain not available");
     }
 //    Validator<T> find(Class<Validator<T>> target);

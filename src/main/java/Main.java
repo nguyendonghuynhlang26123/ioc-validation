@@ -5,7 +5,7 @@ import utils.exceptions.ValidationException;
 import validator.ValidatorHolder;
 import validator.impl.ValidationProvider;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class Main {
@@ -14,6 +14,8 @@ public class Main {
         Student s2 = new Student("", "",20);
         Student s3 = new Student("test", "test@test", 28);
         NoAnnoStudent noAnnoStudent = new NoAnnoStudent("","",20);
+        NoAnnoStudent noAnnoStudent1 = new NoAnnoStudent("Long","",4);
+        NoAnnoStudent noAnnoStudent2 = new NoAnnoStudent("test", "test@test", 28);
         Nested nested = new Nested();
         NestCollection nestCollection = new NestCollection();
 
@@ -32,7 +34,7 @@ public class Main {
 //        nested.validate();
         System.out.println("-----");
         nestCollection.setStudents(List.of(s1, s2, s3));
-        nestCollection.validate();
+//        nestCollection.validate();
         /// Primitive variables
 //        String testString1 = "";
 //        String testString2 = "dac";
@@ -52,6 +54,13 @@ public class Main {
 //        data.validate();
 
 //        compositeBuilder(noAnnoStudent);
+
+//        collectionPrimitiveBuilder(List.of("sa","bada","asdadasdasd"));
+
+//        collectionPojoBuilder(List.of(noAnnoStudent,noAnnoStudent1,noAnnoStudent2));
+        noAnnoStudent.setNest(nestCollection);
+//        objectContainNestCollectionBuilder(noAnnoStudent);
+        collectionObjectContainNestCollectionBuilder(List.of(noAnnoStudent, noAnnoStudent, noAnnoStudent));
     }
 
     public static void demo(String input){
@@ -70,14 +79,92 @@ public class Main {
     public static void compositeBuilder(NoAnnoStudent object){
         try{
             ValidatorHolder<NoAnnoStudent> holder = ValidationProvider.getInstance().<NoAnnoStudent>createValidatorBuilder()
-                    .handler(ValidationProvider.getInstance().getHandler())
-                    .applyComplexConstraints()
+                    .applyPojoConstraints()
                         .applyConstraint("name").notEmpty()
                         .applyConstraint("email").notEmpty().length(4)
                         .applyConstraint("age").max(18)
+                    .endPojoConstraint()
                     .buildValidatable();
             holder.validate(object);
         } catch (ValidationException| ChainBuilderException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void collectionPrimitiveBuilder(Collection<String> values){
+        try{
+            ValidatorHolder<Collection<String>> validatable = ValidationProvider.getInstance()
+                    .<Collection<String>>createValidatorBuilder()
+                    .applyCollectionConstraints()
+                    .applyConstraint()
+                    .length(3,6)
+                    .buildValidatable();
+            validatable.validate(values);
+        } catch (ValidationException| ChainBuilderException e){
+            // TODO: catch errors here???
+            e.printStackTrace();
+        }
+    }
+
+    public static void collectionPojoBuilder(Collection<NoAnnoStudent> students){
+        try{
+            ValidatorHolder<Collection<NoAnnoStudent>> holder = ValidationProvider.getInstance()
+                    .<Collection<NoAnnoStudent>>createValidatorBuilder()
+                    .applyCollectionConstraints()
+                    .applyPojoConstraints()
+                    .applyConstraint("name").notEmpty()
+                    .applyConstraint("email").notEmpty().length(4)
+                    .applyConstraint("age").max(18)
+                    .buildValidatable();
+            holder.validate(students);
+        } catch (ValidationException| ChainBuilderException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void objectContainNestCollectionBuilder(NoAnnoStudent noAnnoStudent){
+        try{
+            var holder = ValidationProvider.getInstance()
+                    .<NoAnnoStudent>createValidatorBuilder()
+                    .applyPojoConstraints()
+                        .applyConstraint("name").notEmpty()
+                        .applyConstraint("age").max(18)
+                        .applyPojoConstraints("nest")
+                            .applyCollectionConstraints("students")
+                                .applyPojoConstraints()
+                                    .applyConstraint("name").notEmpty()
+                                    .applyConstraint("email").notEmpty().length(6)
+                                    .applyConstraint("age").max(6)
+                                .endPojoConstraint()
+                        .endPojoConstraint()
+                        .applyConstraint("email").notEmpty().length(6)
+                    .buildValidatable();
+            holder.validate(noAnnoStudent);
+        } catch (ChainBuilderException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void collectionObjectContainNestCollectionBuilder(Collection<NoAnnoStudent> objects){
+        try{
+            var holder = ValidationProvider.getInstance()
+                    .<Collection<NoAnnoStudent>>createValidatorBuilder()
+                    .applyCollectionConstraints()
+                        .applyPojoConstraints()
+                            .applyConstraint("name").notEmpty()
+                            .applyConstraint("age").max(18)
+                            .applyPojoConstraints("nest")
+                                .applyCollectionConstraints("students")
+                                    .applyPojoConstraints()
+                                        .applyConstraint("name").notEmpty()
+                                        .applyConstraint("email").notEmpty().length(6)
+                                        .applyConstraint("age").max(6)
+                                    .endPojoConstraint()
+                            .endPojoConstraint()
+                            .applyConstraint("email").notEmpty().length(6)
+                    .buildValidatable();
+            holder.validate(objects);
+        } catch (ChainBuilderException e){
             e.printStackTrace();
         }
     }

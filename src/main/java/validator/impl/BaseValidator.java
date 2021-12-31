@@ -1,5 +1,6 @@
 package validator.impl;
 
+import utils.ValidateObject;
 import utils.exceptions.ConstraintDeclareException;
 import validator.Validator;
 import utils.exceptions.UnexpectedTypeException;

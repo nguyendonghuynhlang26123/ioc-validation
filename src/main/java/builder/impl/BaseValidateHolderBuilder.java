@@ -5,59 +5,128 @@ import annotations.impl.MaxValidator;
 import annotations.impl.NotEmptyValidator;
 import builder.ValidateHolderBuilder;
 import handler.ViolationHandler;
+import utils.AddChainRequest;
 import utils.exceptions.ChainBuilderException;
 import validator.ChainPrototype;
 import validator.Validator;
 import validator.ValidatorHolder;
 import validator.impl.BaseValidatorHolder;
-import validator.impl.CompositeValidatorChain;
+import validator.impl.CollectionInternalValidatorChain;
+import validator.impl.PojoValidatorChain;
 import validator.impl.ValidatorChain;
+
+import java.util.EmptyStackException;
+import java.util.Stack;
 
 public class BaseValidateHolderBuilder<T> implements ValidateHolderBuilder<T> {
     BaseValidatorHolder<T> validateHolder;
     ChainPrototype rootChain;
     ChainPrototype currentChain;
+    Stack<ChainPrototype> compositeStack;
 
     public BaseValidateHolderBuilder(ViolationHandler handler) {
         validateHolder = new BaseValidatorHolder<>(handler);
+        compositeStack = new Stack<>();
+    }
+
+    private void addChainNoField(ChainPrototype chain){
+        if(rootChain==null){
+            rootChain = chain;
+            currentChain = rootChain;
+        } else {
+            try {
+                currentChain.addChain(new AddChainRequest(chain));
+            } catch (NoSuchMethodException e) {
+                throw new ChainBuilderException("Parent required chain with field name");
+            }
+        }
     }
 
     @Override
     public ValidateHolderBuilder<T> applyConstraint(){
-        rootChain = new ValidatorChain();
-        currentChain = rootChain;
+//        currentChain = new ValidatorChain();
+        addChainNoField(new ValidatorChain());
         return this;
     }
 
     @Override
-    public ValidateHolderBuilder<T> applyConstraint(String key){
+    public ValidateHolderBuilder<T> applyConstraint(String field){
         currentChain = new ValidatorChain();
-        addCurrentToCompositeRoot(key);
+        try{
+            ChainPrototype composite = compositeStack.peek();
+            composite.addChain(new AddChainRequest(field, currentChain));
+        } catch (EmptyStackException empty){
+            addCurrentToCompositeRoot(field);
+        } catch (NoSuchMethodException noSuchMethodException){
+            throw new ChainBuilderException("Parent single");
+        }
         return this;
     }
 
     @Override
-    public ValidateHolderBuilder<T> applyComplexConstraints(){
-        rootChain = new CompositeValidatorChain();
-        currentChain = rootChain;
+    public ValidateHolderBuilder<T> applyPojoConstraints(){
+        ChainPrototype newChain = new PojoValidatorChain<>();
+        addChainNoField(newChain);
+        compositeStack.push(newChain);
+        currentChain = newChain;
         return this;
     }
 
     @Override
-    public ValidateHolderBuilder<T> applyComplexConstraints(String key){
-        currentChain = new CompositeValidatorChain();
-        addCurrentToCompositeRoot(key);
+    public ValidateHolderBuilder<T> applyPojoConstraints(String field){
+        currentChain = new PojoValidatorChain();
+        ChainPrototype composite = compositeStack.peek();
+        try {
+            composite.addChain(new AddChainRequest(field, currentChain));
+        } catch (NoSuchMethodException e) {
+            throw new ChainBuilderException("Parent not composite");
+        }
+        compositeStack.push(currentChain);
+//        addCurrentToCompositeRoot(field);
         return this;
     }
 
-    private void addCurrentToCompositeRoot(String key){
+    @Override
+    public ValidateHolderBuilder<T> endPojoConstraint(){
+        if(!compositeStack.isEmpty()){
+            compositeStack.pop();
+            try{
+                currentChain = compositeStack.peek();
+            } catch (EmptyStackException e){
+                currentChain = rootChain;
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public ValidateHolderBuilder<T> applyCollectionConstraints() {
+//        currentChain = new CollectionValidatorChain();
+        addChainNoField(new CollectionInternalValidatorChain<>());
+        return this;
+    }
+
+    @Override
+    public ValidateHolderBuilder<T> applyCollectionConstraints(String field) {
+        currentChain = new CollectionInternalValidatorChain<>();
+        ChainPrototype composite = compositeStack.peek();
+        try {
+            composite.addChain(new AddChainRequest(field, currentChain));
+        } catch (NoSuchMethodException e) {
+            throw new ChainBuilderException("Parent single");
+        }
+//        addCurrentToCompositeRoot(field);
+        return this;
+    }
+
+    private void addCurrentToCompositeRoot(String field){
         if (rootChain == null){
-            rootChain = new CompositeValidatorChain();
+            rootChain = new PojoValidatorChain<>();
         }
         try {
-            rootChain.addChain(key, currentChain);
+            rootChain.addChain(new AddChainRequest(field, currentChain));
         } catch (NoSuchMethodException e) {
-            throw new ChainBuilderException("Parent chain is not composite");
+            throw new ChainBuilderException("Parent chain is a single chain");
         }
     }
 

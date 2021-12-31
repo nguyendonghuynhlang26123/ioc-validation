@@ -7,9 +7,12 @@ import validator.ValidatorHolder;
 public interface ValidateHolderBuilder<T> {
     ValidatorHolder<T> buildValidatable();
     ValidateHolderBuilder<T> applyConstraint();
-    ValidateHolderBuilder<T> applyConstraint(String key);
-    ValidateHolderBuilder<T> applyComplexConstraints();
-    ValidateHolderBuilder<T> applyComplexConstraints(String key);
+    ValidateHolderBuilder<T> applyConstraint(String field);
+    ValidateHolderBuilder<T> applyPojoConstraints();
+    ValidateHolderBuilder<T> applyPojoConstraints(String field);
+    ValidateHolderBuilder<T> applyCollectionConstraints();
+    ValidateHolderBuilder<T> applyCollectionConstraints(String field);
+    ValidateHolderBuilder<T> endPojoConstraint();
     ValidateHolderBuilder<T> max(int max);
     ValidateHolderBuilder<T> handler(ViolationHandler handler);
     ValidateHolderBuilder<T> notEmpty();
