@@ -13,7 +13,7 @@ public class PojoValidatorChain<T> implements ChainPrototype<T> {
 
     /**
      * In most case store a single chain for each key
-     * Store multiple chains in a key for nested object case
+     * Store multiple chains (CollectionValidatorChain) in a key for nested object case
      * One chain for outer validate, one chain for the object itself
      * Ex: @NotNull
      *     private Student student;

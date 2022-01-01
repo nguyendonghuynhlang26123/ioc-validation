@@ -8,11 +8,13 @@ public interface ValidateHolderBuilder<T> {
     ValidatorHolder<T> buildValidatable();
     ValidateHolderBuilder<T> applyConstraint();
     ValidateHolderBuilder<T> applyConstraint(String field);
-    ValidateHolderBuilder<T> applyPojoConstraints();
-    ValidateHolderBuilder<T> applyPojoConstraints(String field);
-    ValidateHolderBuilder<T> applyCollectionConstraints();
-    ValidateHolderBuilder<T> applyCollectionConstraints(String field);
-    ValidateHolderBuilder<T> endPojoConstraint();
+    ValidateHolderBuilder<T> applyPojoConstraint();
+    ValidateHolderBuilder<T> applyPojoConstraint(String field);
+    ValidateHolderBuilder<T> applyCollectionInternalConstraint();
+    ValidateHolderBuilder<T> applyCollectionInternalConstraint(String field);
+    ValidateHolderBuilder<T> applyCollectionConstraint();
+    ValidateHolderBuilder<T> applyCollectionConstraint(String field);
+    ValidateHolderBuilder<T> endCompositeConstraint();
     ValidateHolderBuilder<T> max(int max);
     ValidateHolderBuilder<T> handler(ViolationHandler handler);
     ValidateHolderBuilder<T> notEmpty();

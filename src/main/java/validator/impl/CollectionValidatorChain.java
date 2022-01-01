@@ -6,9 +6,12 @@ import validator.ChainPrototype;
 import violation.ViolationContext;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 public class CollectionValidatorChain<T> implements ChainPrototype<T> {
     Collection<ChainPrototype> chains;
+
+    public CollectionValidatorChain(){chains = new LinkedList<>();}
 
     private void implicitAddChain(ChainPrototype chain){
         chains.add(chain);
