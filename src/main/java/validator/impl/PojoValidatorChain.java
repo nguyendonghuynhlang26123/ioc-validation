@@ -53,6 +53,11 @@ public class PojoValidatorChain<T> implements ChainPrototype<T> {
     }
 
     @Override
+    public boolean isEmpty() {
+        return chains.isEmpty();
+    }
+
+    @Override
     public ChainPrototype<T> cloneChain() {
         PojoValidatorChain<T> clone = new PojoValidatorChain<>();
 //        chains.forEach((k,v)-> v.forEach(chain->clone.implicitAddChain(k, chain.cloneChain())));

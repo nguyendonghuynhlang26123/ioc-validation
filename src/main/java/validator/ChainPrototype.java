@@ -20,7 +20,8 @@ public interface ChainPrototype<T> {
     default ChainPrototype<T> addChain(AddChainRequest<T> chainRequest) throws NoSuchMethodException {
         throw new NoSuchMethodException("Add chain on single chain not available");
     }
-//    Validator<T> find(Class<Validator<T>> target);
+
+    boolean isEmpty();
 
     //Business logic method
     void processValidation(ValidateObject<T> value, ViolationContext context);

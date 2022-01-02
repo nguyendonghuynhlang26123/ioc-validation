@@ -39,19 +39,29 @@ public class AnnotationResolver {
                 continue;
             }
 
-            ChainPrototype singleChain = getChainFromField(field);
-
             try {
-                chain.addChain(new AddChainRequest(field.getName(), singleChain));
+                ChainPrototype fieldOuterChain = getChainFromField(field);
+                if(!fieldOuterChain.isEmpty()){
+                    chain.addChain(new AddChainRequest(field.getName(), fieldOuterChain));
+                }
 
                 // If this class can be validated
                 if (Collection.class.isAssignableFrom(field.getType())){
+                    var collectionChildChain = new CollectionInternalValidatorChain<>();
                     ParameterizedType p = (ParameterizedType) field.getGenericType();
                     Class<?> genericT =(Class<?>) p.getActualTypeArguments()[0];
                     if (Validatable.class.isAssignableFrom(genericT)){
                         var nestedChain = resolve(genericT);
-                        var collectionChildChain = new CollectionInternalValidatorChain<>();
                         collectionChildChain.addChain(new AddChainRequest<>(nestedChain));
+                    }
+
+                    //test anno
+                    ChainPrototype genericTypeOuterChain = getChainFromGenericType(field);
+                    if(!genericTypeOuterChain.isEmpty()){
+                        collectionChildChain.addChain(new AddChainRequest<>(genericTypeOuterChain));
+                    }
+
+                    if(!collectionChildChain.isEmpty()){
                         chain.addChain(new AddChainRequest(field.getName(), collectionChildChain));
                     }
                 }
@@ -71,8 +81,18 @@ public class AnnotationResolver {
     private ChainPrototype getChainFromField(Field field) {
         Annotation[] annotations;
         annotations = field.getDeclaredAnnotations();
+        return annotationToChain(annotations);
+    }
 
-        ChainPrototype singleChain = new ValidatorChain();
+    private ChainPrototype getChainFromGenericType(Field field){
+        AnnotatedParameterizedType listType =
+                (AnnotatedParameterizedType) field.getAnnotatedType();
+        AnnotatedType annType = listType.getAnnotatedActualTypeArguments()[0];
+        return annotationToChain(annType.getAnnotations());
+    }
+
+    private ChainPrototype annotationToChain(Annotation[] annotations){
+        ChainPrototype singleChain = new ValidatorChain<>();
 
         // For each field's annotation
         for (Annotation annotation : annotations) {

@@ -78,6 +78,11 @@ public class ValidatorChain<T> implements ChainPrototype<T> {
     }
 
     @Override
+    public boolean isEmpty() {
+        return head==null && tail==null;
+    }
+
+    @Override
     public ChainPrototype<T> cloneChain() {
         return new ValidatorChain<T>(this);
     }
