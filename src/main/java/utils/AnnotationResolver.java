@@ -1,7 +1,6 @@
 package utils;
 
 import annotations.ValidatedBy;
-import demo.pojos.Student;
 import utils.exceptions.ProviderResolveException;
 import utils.exceptions.ValidationException;
 import utils.exceptions.ValidatorDeclarationException;
@@ -10,8 +9,8 @@ import validator.ChainPrototype;
 import validator.Validatable;
 import validator.Validator;
 import validator.impl.ChainRegistry;
-import validator.impl.CollectionValidatorChain;
-import validator.impl.CompositeValidatorChain;
+import validator.impl.CollectionInternalValidatorChain;
+import validator.impl.PojoValidatorChain;
 import validator.impl.ValidatorChain;
 
 import java.lang.annotation.Annotation;
@@ -19,16 +18,11 @@ import java.lang.reflect.*;
 import java.util.Collection;
 
 public class AnnotationResolver {
-    public ChainPrototype resolve(Class<?> objectClass, boolean nested) {
+    public ChainPrototype resolve(Class<?> objectClass) {
         if (ChainRegistry.getInstance().hasChain(objectClass.getSimpleName())){
             return ChainRegistry.getInstance().getChain(objectClass.getSimpleName());
         }
-        ChainPrototype chain;
-        if (nested){
-            chain = new CollectionValidatorChain<>();
-        } else {
-            chain = new CompositeValidatorChain<>();
-        }
+        ChainPrototype chain = new PojoValidatorChain<>();
         resolveObject(objectClass, chain);
         return chain;
     }
@@ -48,20 +42,22 @@ public class AnnotationResolver {
             ChainPrototype singleChain = getChainFromField(field);
 
             try {
-                chain.addChain(field.getName(), singleChain);
+                chain.addChain(new AddChainRequest(field.getName(), singleChain));
 
                 // If this class can be validated
                 if (Collection.class.isAssignableFrom(field.getType())){
                     ParameterizedType p = (ParameterizedType) field.getGenericType();
                     Class<?> genericT =(Class<?>) p.getActualTypeArguments()[0];
                     if (Validatable.class.isAssignableFrom(genericT)){
-                        var nestedChain = resolve(genericT, true);
-                        chain.addChain(field.getName(), nestedChain);
+                        var nestedChain = resolve(genericT);
+                        var collectionChildChain = new CollectionInternalValidatorChain<>();
+                        collectionChildChain.addChain(new AddChainRequest<>(nestedChain));
+                        chain.addChain(new AddChainRequest(field.getName(), collectionChildChain));
                     }
                 }
                 else if(Validatable.class.isAssignableFrom(field.getType())){
-                    var nestedChain = resolve(field.getType(), false); //recursively call to resolve
-                    chain.addChain(field.getName(), nestedChain);
+                    var nestedChain = resolve(field.getType()); //recursively call to resolve
+                    chain.addChain(new AddChainRequest(field.getName(), nestedChain));
                 }
             } catch (NoSuchMethodException e) {
                 System.err.println("Warning! Unexpected error found at " + objectClass.getName());

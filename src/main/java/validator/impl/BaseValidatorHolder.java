@@ -1,6 +1,7 @@
 package validator.impl;
 
 import handler.ViolationHandler;
+import utils.ValidateObject;
 import validator.ChainPrototype;
 import validator.ValidatorHolder;
 import violation.Violation;
@@ -22,7 +23,7 @@ public class BaseValidatorHolder<T> extends ValidatorHolder<T> {
 
     public BaseValidatorHolder(ViolationHandler handler){
         super(handler);
-        this.chain = new CompositeValidatorChain<>();
+        this.chain = new PojoValidatorChain<>();
     }
 
     @Override

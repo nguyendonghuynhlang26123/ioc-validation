@@ -1,7 +1,7 @@
 package validator;
 
 import utils.exceptions.UnexpectedTypeException;
-import validator.impl.ValidateObject;
+import utils.ValidateObject;
 import violation.ViolationContext;
 
 public interface Validator<T> {
