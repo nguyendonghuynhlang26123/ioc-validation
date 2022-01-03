@@ -39,4 +39,9 @@ public class CollectionValidatorChain<T> implements ChainPrototype<T> {
         chains.add(chainRequest.getChain());
         return this;
     }
+
+    @Override
+    public boolean isEmpty() {
+        return chains.isEmpty();
+    }
 }
