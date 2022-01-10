@@ -1,5 +1,6 @@
 package utils;
 
+import annotations.Ignore;
 import annotations.ValidatedBy;
 import utils.exceptions.ProviderResolveException;
 import utils.exceptions.ValidationException;
@@ -15,47 +16,76 @@ import validator.impl.ValidatorChain;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Read annotation wrapping fields in an objects and resolve them into {ChainPrototype}
+ */
 public class AnnotationResolver {
+    /**
+     * Read an object class which has fields wrapped with @Constraints & resolve it into {@link validator.ChainPrototype}
+     * @param objectClass: Class of an object we want to resolve
+     * @return {@link validator.ChainPrototype}
+     */
     public ChainPrototype resolve(Class<?> objectClass) {
+        //Check if in the registry contains this chain already => return it
         if (ChainRegistry.getInstance().hasChain(objectClass.getSimpleName())){
             return ChainRegistry.getInstance().getChain(objectClass.getSimpleName());
         }
+
+        //Try to resolve it from scratch
         ChainPrototype chain = new PojoValidatorChain<>();
-        resolveObject(objectClass, chain);
+        _resolveObject(objectClass, chain);
         return chain;
     }
 
     //Read each fields of the object
-    private void resolveObject(Class<?> objectClass, ChainPrototype chain) throws ValidationException {
+
+    /**
+     * An internal function do the dirty work of looping through all fields and resolve it into chain
+     * @param objectClass: Class of an object we want to resolve
+     * @return {@link validator.ChainPrototype}
+     * @throws ValidationException
+     */
+    private void _resolveObject(Class<?> objectClass, ChainPrototype chain) throws ValidationException {
         Field[] fields = objectClass.getDeclaredFields();
 
-        // For each field in class
+        // Loop through all steps of field
         for (Field field : fields) {
-            //Check if that field is accessible
+            /// 1. Check if that field is accessible
             if (!field.trySetAccessible()) {
                 System.err.println("Warning! Field " + field.getName() + " in " + objectClass.getName() + " are not accessible");
                 continue;
             }
 
+            /// 1.1: Skip resolve if this field is ignore
+            if (field.isAnnotationPresent(Ignore.class)) continue;
+
             try {
+                /// 2. Try to get a chain that wrap all the fields. I.e: @A @B @C String a; ==> AValidator => BValidator => CValidator
                 ChainPrototype fieldOuterChain = getChainFromField(field);
+
+                /// 3. Add Chain to current chain: field => SingleChain {AValidator => BValidator => CValidator}
                 if(!fieldOuterChain.isEmpty()){
                     chain.addChain(new AddChainRequest(field.getName(), fieldOuterChain));
                 }
 
-                // If this class can be validated
+                /* *
+                 * 4.1' If this class is a collection<T>, resolve T class
+                 * As a result: field => CollectionChain(SingleChain, InternalCollectionChain)
+                 * */
                 if (Collection.class.isAssignableFrom(field.getType())){
                     var collectionChildChain = new CollectionInternalValidatorChain<>();
                     ParameterizedType p = (ParameterizedType) field.getGenericType();
                     Class<?> genericT =(Class<?>) p.getActualTypeArguments()[0];
+
+
                     if (Validatable.class.isAssignableFrom(genericT)){
                         var nestedChain = resolve(genericT);
                         collectionChildChain.addChain(new AddChainRequest<>(nestedChain));
                     }
 
-                    //test anno
                     ChainPrototype genericTypeOuterChain = getChainFromGenericType(field);
                     if(!genericTypeOuterChain.isEmpty()){
                         collectionChildChain.addChain(new AddChainRequest<>(genericTypeOuterChain));
@@ -65,6 +95,10 @@ public class AnnotationResolver {
                         chain.addChain(new AddChainRequest(field.getName(), collectionChildChain));
                     }
                 }
+
+                /**
+                 * 4.2 Handle nested variable case
+                 */
                 else if(Validatable.class.isAssignableFrom(field.getType())){
                     var nestedChain = resolve(field.getType()); //recursively call to resolve
                     chain.addChain(new AddChainRequest(field.getName(), nestedChain));
@@ -96,7 +130,6 @@ public class AnnotationResolver {
 
         // For each field's annotation
         for (Annotation annotation : annotations) {
-            //DO some sanity check:
             Class<? extends Validator<?>> validatorImpl = getValidatorImpl(annotation);
 
             try {
@@ -121,6 +154,7 @@ public class AnnotationResolver {
     private Class<? extends Validator<?>> getValidatorImpl(Annotation annotation) {
         ValidatedBy validateBy = annotation.annotationType().getDeclaredAnnotation(ValidatedBy.class);
 
+        //DO some sanity check:
         //check if @ValidatedBy is implemented
         if (validateBy == null) {
             // No Validator Class is assigned.

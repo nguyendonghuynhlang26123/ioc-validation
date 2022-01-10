@@ -3,7 +3,7 @@ package demo.pojos;
 public class NoAnnoStudent {
     String name;
     String email;
-    Integer age;
+    int age;
     NestCollection nest;
 
     public NoAnnoStudent(String name, String email, int age) {
