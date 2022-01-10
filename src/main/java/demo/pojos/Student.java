@@ -6,6 +6,7 @@ import validator.Validatable;
 import java.time.LocalDate;
 
 public class Student implements Validatable {
+    @MatchPattern(pattern = "^[a-zA-Z\\s]+$", message = "Name should be match the characters")
     @NotEmpty(message = "Name should not be empty")
     String name;
 
