@@ -1,8 +1,11 @@
+import builder.impl.BaseValidateHolderBuilder;
 import demo.pojos.*;
+import handler.ViolationHandler;
 import handler.impl.LoggingViolation;
 import utils.exceptions.ChainBuilderException;
 import utils.exceptions.ValidationException;
 import validator.ValidatorHolder;
+import validator.impl.BaseValidatorHolder;
 import validator.impl.ValidationProvider;
 
 import java.util.Collection;
@@ -10,7 +13,6 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        NestCollection nestCollection = new NestCollection();
 
         //Register handler
         ValidationProvider.getInstance().registerViolationListener(new LoggingViolation());
@@ -24,6 +26,11 @@ public class Main {
         System.out.println("b: Nested Validatable: Validate nested.student");
         Nested nested = new Nested(10);
         nested.setStudent(s1);
+        nested.validate();
+
+        System.out.println("c: Nested Collection: NestedCollection{ Collection<Student> students)");
+        NestCollection nestCollection = new NestCollection();
+        nestCollection.setStudents(List.of(s1, s1));
         nested.validate();
         System.out.println("-----");
 
@@ -50,14 +57,14 @@ public class Main {
         NoAnnoStudent noAnnoStudent = new NoAnnoStudent("Long","",4);
         ValidationProvider.getInstance().<NoAnnoStudent>createValidatorBuilder()
                 .applyPojoConstraint()
-                .applyConstraint("name").length(6)
-                .applyConstraint("email").notEmpty()
-                .applyConstraint("age").max(18)
+                    .applyConstraint("name").length(6)
+                    .applyConstraint("email").notEmpty()
+                    .applyConstraint("age").max(18)
                 .buildValidatable().validate(noAnnoStudent);
 
         /// d: Build validator for Collections:
-        System.out.println("d: Build validator for Collections");
-        Collection<String> strings = List.of("a", "ab", "abc", "abcd", "abcde", "abcdef", "abcdefg", "abcdefgh");
+        System.out.println("d: Build validator for Collections<@Length(min=3, max=6)String>");
+        Collection<String> strings = List.of( "ab", "abc", "abcd", "abcde", "abcdef");
         ValidationProvider.getInstance()
                 .<Collection<String>>createValidatorBuilder()
                 .applyCollectionInternalConstraint()

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Nested implements Validatable {
     @NotNull
-    @Ignore
+//    @Ignore
     private Student student;
 
     @Max(4)
